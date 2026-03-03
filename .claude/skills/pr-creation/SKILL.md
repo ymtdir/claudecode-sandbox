@@ -234,11 +234,40 @@ fi
 
 ### ステップ7: 自動レビュー実行
 
-PR作成後、即座にレビューを実行：
+PR作成後、即座にレビューを実行してGitHubに投稿：
 
-1. **pr-reviewerサブエージェント**を起動
-2. 作成したPRの内容を分析
-3. レビューコメントを投稿
+```javascript
+// 1. pr-reviewerサブエージェントを起動
+Task({
+  "subagent_type": "pr-reviewer",
+  "description": "Review PR #[PR番号]",
+  "prompt": `Pull Request #[PR番号]のレビューを実行してください。
+
+  特に以下を確認:
+  - コードの品質と一貫性
+  - ドキュメントの整合性
+  - テストの実施状況
+  - 関連Issueとの整合性`
+})
+
+// 2. サブエージェントのレビュー結果を受け取ったら、GitHubに投稿
+mcp__github__pull_request_review_write({
+  "method": "create",
+  "owner": "[owner]",
+  "repo": "[repo]",
+  "pullNumber": [PR番号],
+  "body": "[レビュー結果のサマリー]",
+  "event": "COMMENT"  // 自分のPRにはCOMMENTのみ可能
+})
+
+// 注意: 自分が作成したPRには"APPROVE"できないため、"COMMENT"を使用
+```
+
+**レビュー投稿の内容**：
+- チェックリスト形式での確認項目
+- 良い点と改善点の指摘
+- 関連ドキュメントとの整合性確認
+- テスト実行結果の確認
 
 ## PRタイトルの生成
 

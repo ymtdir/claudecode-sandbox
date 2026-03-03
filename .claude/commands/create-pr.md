@@ -30,6 +30,7 @@ claude
    - PRテンプレートの選択（bug/feature/refactor）
    - PR本文の生成
    - GitHub APIでPR作成
+   - 自動レビューの実行とGitHub投稿
 
 ### ステップ3: 結果の報告
 
@@ -51,6 +52,7 @@ URL: https://github.com/[owner]/[repo]/pull/[番号]
 - Pull Requestが正常に作成される
 - 関連Issueとの紐付けが完了
 - 適切なテンプレートが適用される
+- 自動レビューがGitHubに投稿される
 
 完了時のメッセージ:
 ```
