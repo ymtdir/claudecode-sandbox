@@ -1,14 +1,151 @@
 {
   "permissions": {
     "allow": [
-      "Skill(prd-writing)",
-      "Skill(functional-design)",
-      "Skill(architecture-design)",
-      "Skill(repository-structure)",
-      "Skill(development-guidelines)",
-      "Skill(glossary-creation)"
+      // スキル系（すべて許可）
+      "Skill(*)",
+
+      // Git操作（全般許可）
+      "Bash(git *)",
+      "Bash(gh *)",
+
+      // npm/node関連（全般許可）
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(node *)",
+      "Bash(yarn *)",
+      "Bash(pnpm *)",
+
+      // ビルド・テストツール
+      "Bash(vite*)",
+      "Bash(jest*)",
+      "Bash(vitest*)",
+      "Bash(tsc *)",
+      "Bash(tsx *)",
+      "Bash(eslint*)",
+      "Bash(prettier*)",
+
+      // ファイル閲覧系（読み取り専用）
+      "Bash(ls*)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(grep *)",
+      "Bash(find *)",
+      "Bash(tree*)",
+      "Bash(wc *)",
+      "Bash(diff *)",
+
+      // ディレクトリ操作
+      "Bash(cd *)",
+      "Bash(pwd)",
+      "Bash(mkdir *)",
+
+      // ファイル操作（基本的なもの）
+      "Bash(touch *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(echo *)",
+
+      // プロセス確認
+      "Bash(ps*)",
+      "Bash(lsof*)",
+      "Bash(netstat*)",
+
+      // その他開発ツール
+      "Bash(which *)",
+      "Bash(curl *)",
+      "Bash(wget *)",
+      "Bash(jq *)",
+      "Bash(awk *)",
+      "Bash(sed *)",
+
+      // Docker関連
+      "Bash(docker *)",
+      "Bash(docker-compose *)",
+
+      // Claude関連
+      "Bash(claude *)",
+
+      // Web取得（開発関連ドメイン）
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:*.github.com)",
+      "WebFetch(domain:github.blog)",
+      "WebFetch(domain:npmjs.com)",
+      "WebFetch(domain:*.npmjs.com)",
+      "WebFetch(domain:nodejs.org)",
+      "WebFetch(domain:developer.mozilla.org)",
+      "WebFetch(domain:stackoverflow.com)",
+      "WebFetch(domain:debbie.codes)",
+
+      // GitHub MCP API（すべて許可）
+      "mcp__github__*",
+
+      // IDE統合（すべて許可）
+      "mcp__ide__*"
     ],
-    "deny": [],
+    "deny": [
+      // システム破壊の可能性があるコマンド
+      "Bash(rm -rf /)",
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~)",
+      "Bash(rm -rf $HOME)",
+
+      // 権限昇格
+      "Bash(sudo *)",
+      "Bash(su *)",
+      "Bash(doas *)",
+
+      // 危険な権限変更
+      "Bash(chmod 777 *)",
+      "Bash(chmod -R 777 *)",
+      "Bash(chown root *)",
+
+      // プロセス強制終了
+      "Bash(kill -9 *)",
+      "Bash(killall *)",
+      "Bash(pkill -9 *)",
+
+      // システム制御
+      "Bash(shutdown *)",
+      "Bash(reboot *)",
+      "Bash(halt *)",
+      "Bash(poweroff *)",
+      "Bash(systemctl *)",
+      "Bash(service *)",
+      "Bash(init *)",
+
+      // ネットワーク設定変更
+      "Bash(ifconfig *)",
+      "Bash(iptables *)",
+      "Bash(route add *)",
+      "Bash(route del *)",
+      "Bash(ip route *)",
+
+      // システムファイル編集
+      "Edit(/etc/*)",
+      "Write(/etc/*)",
+      "Edit(/System/*)",
+      "Write(/System/*)",
+      "Edit(/usr/*)",
+      "Write(/usr/*)",
+      "Edit(/bin/*)",
+      "Write(/bin/*)",
+      "Edit(/sbin/*)",
+      "Write(/sbin/*)",
+
+      // 環境変数の危険な変更
+      "Bash(export PATH=)",
+      "Bash(unset PATH)",
+      "Bash(export HOME=)",
+
+      // ディスク操作
+      "Bash(dd *)",
+      "Bash(format *)",
+      "Bash(fdisk *)",
+      "Bash(mkfs *)",
+      "Bash(mount *)",
+      "Bash(umount *)"
+    ],
     "ask": []
   },
   "hooks": {
@@ -23,5 +160,9 @@
         ]
       }
     ]
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "github"
+  ]
 }

@@ -95,7 +95,7 @@
 
 1. このテンプレートを使用
 2. `/setup-project` で永続的ドキュメント作成(対話的に6つ作成)
-3. `/add-feature [機能]` で機能実装
+3. 新機能追加はIssue駆動開発で実施
 
 ### 日常的な使い方
 
@@ -107,8 +107,12 @@
 > architecture.mdのパフォーマンス要件を見直して
 > glossary.mdに新しいドメイン用語を追加
 
-# 機能追加(定型フローはコマンド)
-> /add-feature ユーザープロフィール編集
+# 新機能追加（Issue駆動開発）
+> /create-issue ユーザープロフィール編集機能の追加
+> /resolve-issue [作成されたIssue番号]
+
+# 既存Issueの解決
+> /resolve-issue 123
 
 # 詳細レビュー(詳細なレポートが必要なとき)
 > /review-docs docs/product-requirements.md
