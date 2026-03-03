@@ -101,8 +101,10 @@ ls docs/ideas/
 - ドキュメントの編集: 普通に会話で依頼してください
   例: 「PRDに新機能を追加して」「architecture.mdを見直して」
 
-- 機能の追加: /add-feature [機能名] を実行してください
-  例: /add-feature ユーザー認証
+- 新機能の追加（Issue駆動開発）:
+  1. /create-issue [機能名] でIssueを作成
+  2. /resolve-issue [Issue番号] で実装
+  例: /create-issue ユーザー認証機能の追加
 
 - ドキュメントレビュー: /review-docs [パス] を実行してください
   例: /review-docs docs/product-requirements.md
