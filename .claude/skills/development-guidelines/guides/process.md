@@ -97,9 +97,8 @@ main (本番環境)
 feat: 新機能 (minor version up)
 fix: バグ修正 (patch version up)
 docs: ドキュメント
-style: フォーマット (コードの動作に影響なし)
-refactor: リファクタリング
-perf: パフォーマンス改善
+style: UI/UX・フォーマット (見た目の変更)
+refactor: リファクタリング・パフォーマンス改善
 test: テスト追加・修正
 build: ビルドシステム
 ci: CI/CD設定
