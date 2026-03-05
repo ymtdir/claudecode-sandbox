@@ -19,6 +19,8 @@ allowed-tools: Read, Write, Bash, Glob, mcp__github__*
 
 ## PR作成プロセス
 
+**注**: ラベル判定ルールは[shared/label-definitions.md](../shared/label-definitions.md)を参照
+
 ### ステップ1: ブランチ情報の収集
 
 ```bash
@@ -42,18 +44,19 @@ git diff --name-only origin/main...HEAD
 - `feature/user-auth` → コミットメッセージから検索
 - その他 → 最近のコミットメッセージから`#\d+`を検索
 
-### ステップ3: 変更内容の分類
+### ステップ3: ラベルの判定
 
-コミットメッセージのプレフィックスから判定:
-- **fix:** が多い → bug PR
-- **feat:** が多い → feature PR
-- **refactor:** が多い → refactor PR
+関連Issueが存在する場合は、**Issueのラベルをそのまま継承**します。
+Issueがない場合のみ、コミットプレフィックスから判定します。
+
+判定ルールの詳細は [shared/label-definitions.md](../shared/label-definitions.md) を参照。
 
 ### ステップ4: テンプレートの適用
 
 判定された種類に応じてテンプレートを選択:
-- **bug** → `templates/bug-fix.md`
-- **feature** → `templates/feature.md`
+- **bug** → `templates/bug.md`
+- **enhancement** → `templates/enhancement.md`
+- **documentation** → シンプルなドキュメント更新形式
 - **refactor** → `templates/refactor.md`
 
 ### ステップ5: PR作成
@@ -85,152 +88,19 @@ REPO=$(gh repo view --json name -q ".name")
 
 ### ステップ6: 自動ラベル付与
 
-PR作成成功後、関連Issueとコミットプレフィックスに基づいてラベルを付与：
+PR作成成功後、適切なラベルを自動付与します。
 
-```bash
-# 1. 関連Issueのラベルを確認（最優先）
-if [ -n "$ISSUE_NUMBER" ]; then
-  ISSUE_LABELS=$(gh issue view $ISSUE_NUMBER --json labels -q '.labels[].name')
+**ラベル付与の流れ**:
+1. 関連Issueがある場合 → **Issueのラベルを継承**（最優先）
+2. 関連Issueがない場合 → コミットプレフィックスから判定
+3. GitHub APIを使用してラベルを付与
 
-  # Issueにenhancement/bug/documentation/refactor/ui/uxラベルがあれば採用
-  for label in enhancement bug documentation refactor "ui/ux"; do
-    if echo "$ISSUE_LABELS" | grep -q "^$label$"; then
-      LABEL="$label"
-      echo "ℹ️ Issue #$ISSUE_NUMBER のラベル '$LABEL' を継承します"
-      break
-    fi
-  done
-fi
+**実装のポイント**:
+- `gh api repos/$OWNER/$REPO/issues/$PR_NUMBER/labels`でラベルを付与
+- ラベルが存在しない場合は警告を表示（自動作成はしない）
+- `chore:`や`test:`より`feat:`や`fix:`を優先（本質的な変更を重視）
 
-# 2. Issueラベルがない場合、コミットメッセージを解析
-if [ -z "$LABEL" ]; then
-  git log origin/main..HEAD --oneline > /tmp/commits.txt
-
-  # コロンを含むコミットのみ処理し、既知のプレフィックスのみカウント
-  grep ':' /tmp/commits.txt | cut -d: -f1 | awk '{print $2}' | \
-    grep -E '^(feat|fix|docs|refactor|style|test|chore)$' | \
-    sort | uniq -c | sort -rn > /tmp/prefix_counts.txt
-
-  # カウント結果が空の場合の処理
-  if [ ! -s /tmp/prefix_counts.txt ]; then
-    echo "ℹ️ 従来型コミットプレフィックスが見つかりませんでした"
-    PRIMARY_TYPE=""
-  else
-    # 優先順位を定義（fix > feat > style > docs > refactor）
-    PRIORITY_ORDER=("fix" "feat" "style" "docs" "refactor")
-
-    # 最大カウントを取得
-    MAX_COUNT=$(head -1 /tmp/prefix_counts.txt | awk '{print $1}')
-
-    # 最大カウントのプレフィックスを取得
-    CANDIDATES=$(awk -v max="$MAX_COUNT" '$1 == max {print $2}' /tmp/prefix_counts.txt)
-
-    # 優先順位に従って選択
-    PRIMARY_TYPE=""
-    for prefix in "${PRIORITY_ORDER[@]}"; do
-      if echo "$CANDIDATES" | grep -q "^${prefix}$"; then
-        PRIMARY_TYPE="$prefix"
-        echo "ℹ️ プレフィックス '$PRIMARY_TYPE' を選択（優先順位による）"
-        break
-      fi
-    done
-
-    # 優先順位にない場合は最初の候補を使用
-    if [ -z "$PRIMARY_TYPE" ]; then
-      PRIMARY_TYPE=$(echo "$CANDIDATES" | head -1)
-      if [ -n "$PRIMARY_TYPE" ]; then
-        echo "ℹ️ プレフィックス '$PRIMARY_TYPE' を選択（最多）"
-      fi
-    fi
-  fi
-
-  # ラベルマッピングに基づいてラベルを決定
-  case "$PRIMARY_TYPE" in
-    "feat")
-      LABEL="enhancement"
-      echo "ℹ️ コミットプレフィックス 'feat:' から 'enhancement' ラベルを選択"
-      ;;
-    "fix")
-      LABEL="bug"
-      echo "ℹ️ コミットプレフィックス 'fix:' から 'bug' ラベルを選択"
-      ;;
-    "docs")
-      LABEL="documentation"
-      echo "ℹ️ コミットプレフィックス 'docs:' から 'documentation' ラベルを選択"
-      ;;
-    "refactor")
-      LABEL="refactor"
-      echo "ℹ️ コミットプレフィックス 'refactor:' から 'refactor' ラベルを選択"
-      ;;
-    "style")
-      LABEL="ui/ux"
-      echo "ℹ️ コミットプレフィックス 'style:' から 'ui/ux' ラベルを選択"
-      ;;
-    *)
-      LABEL=""
-      ;;
-  esac
-fi
-
-# 3. ラベルが存在するか確認して付与
-if [ -n "$LABEL" ]; then
-  # ラベル一覧を取得
-  gh label list --json name -q ".[].name" > /tmp/labels.txt
-  if [ $? -ne 0 ]; then
-    echo "⚠️ ラベル一覧の取得に失敗しました"
-    exit 0
-  fi
-
-  # ラベルが存在するか確認
-  if grep -q "^${LABEL}$" /tmp/labels.txt; then
-    # ラベルをPRに追加（GitHub APIを使用）
-    gh api repos/$OWNER/$REPO/issues/$PR_NUMBER/labels -X POST --field "labels[]=$LABEL"
-    if [ $? -eq 0 ]; then
-      echo "✅ ラベル '$LABEL' を追加しました"
-    else
-      echo "⚠️ ラベル '$LABEL' の追加に失敗しました"
-    fi
-  else
-    # ラベルが存在しない場合、警告を表示
-    echo "⚠️ ラベル '$LABEL' が存在しません"
-    echo "以下のラベルを事前に作成してください："
-    echo "  - enhancement (新機能)"
-    echo "  - bug (バグ修正)"
-    echo "  - documentation (ドキュメント)"
-    echo "  - refactor (リファクタリング)"
-    echo "  - ui/ux (UI/UXの改善)"
-  fi
-else
-  echo "ℹ️ プレフィックスからラベルを判定できませんでした"
-fi
-```
-
-**ラベルマッピング**:
-- `feat:` → `enhancement`（新機能）
-- `fix:` → `bug`（バグ修正）
-- `docs:` → `documentation`（ドキュメント）
-- `refactor:` → `refactor`（リファクタリング）
-- `style:` → `ui/ux`（UI/UXの改善）
-
-**ラベル判定の優先順位**:
-1. **関連Issueのラベルを継承**（最優先）
-   - Issue #123に`enhancement`ラベル → PRも`enhancement`
-   - Issueラベルがあれば、コミットプレフィックスに関係なく採用
-
-2. **コミットプレフィックスから判定**（Issueラベルがない場合）
-   - `feat:` があれば → `enhancement`（新機能）
-   - `fix:` があれば → `bug`（バグ修正）
-   - `style:` があれば → `ui/ux`（UI/UX改善）
-   - `docs:` があれば → `documentation`（ドキュメント）
-   - `refactor:` があれば → `refactor`（リファクタリング）
-   - 上記の優先順位で最初に見つかったものを採用
-
-**重要な設計判断**:
-- Issueとの一貫性を最重視（Issueラベルがあれば継承）
-- `chore:`や`test:`が多くても、`feat:`や`fix:`があればそちらを優先
-- 作業プロセス（chore）より実装内容（feat/fix）を重視
-- ラベルは事前に作成しておく必要がある（自動作成はしない）
-- GitHub APIを使用してラベルを付与（`gh pr edit`は権限エラーが発生するため使用しない）
+ラベルマッピングルールは [shared/label-definitions.md](../shared/label-definitions.md) を参照。
 
 ### ステップ7: 自動レビュー実行
 
@@ -276,6 +146,8 @@ mcp__github__pull_request_review_write({
 fix: [Issue概要] (#123)
 feat: [Issue概要] (#456)
 refactor: [Issue概要] (#789)
+style: [Issue概要] (#012)
+docs: [Issue概要] (#345)
 ```
 
 ### パターン2: Issue連携なし
@@ -283,6 +155,8 @@ refactor: [Issue概要] (#789)
 fix: [最初のコミットメッセージから抽出]
 feat: [主要な変更内容を要約]
 refactor: [リファクタリング対象を明記]
+style: [UI/UX改善内容を明記]
+docs: [ドキュメント更新内容を明記]
 ```
 
 ## PR本文の構成
@@ -371,24 +245,3 @@ PR作成前の確認:
 解決してから再度実行してください
 ```
 
-## レビュー準備
-
-PR作成後の追加処理:
-
-1. **自動ラベル付与**（ステップ6で実装）
-   - コミットプレフィックスから自動判定
-   - `feat:` → enhancement（新機能）
-   - `fix:` → bug（バグ修正）
-   - `docs:` → documentation（ドキュメント）
-   - `refactor:` → refactor（リファクタリング）
-   - `style:` → ui/ux（UI/UXの改善）
-   - ラベルが存在しない場合は警告表示
-   - test:とchore:はラベル付与対象外
-
-2. **レビュアーの推奨**
-   - 変更ファイルのCODEOWNERSから自動判定
-   - 最近のコントリビューターから提案
-
-3. **関連PRの確認**
-   - 同じIssueに関連する他のPR
-   - 競合する可能性のあるPR
