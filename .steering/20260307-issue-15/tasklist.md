@@ -2,13 +2,13 @@
 
 ## 進捗状況
 
-- [ ] Expoプロジェクトの初期化
-- [ ] TypeScript設定の追加と最適化
-- [ ] ESLint設定の追加
-- [ ] Prettier設定の追加
-- [ ] EditorConfigとVS Code設定の追加
-- [ ] README.mdの作成
-- [ ] 動作確認とテスト
+- [x] Expoプロジェクトの初期化
+- [x] TypeScript設定の追加と最適化
+- [x] ESLint設定の追加
+- [x] Prettier設定の追加
+- [x] EditorConfigとVS Code設定の追加
+- [x] README.mdの作成
+- [x] 動作確認とテスト
 
 ## 詳細タスク
 
