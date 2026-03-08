@@ -96,9 +96,22 @@ PR作成成功後、適切なラベルを自動付与します。
 3. GitHub APIを使用してラベルを付与
 
 **実装のポイント**:
-- `gh api repos/$OWNER/$REPO/issues/$PR_NUMBER/labels`でラベルを付与
 - ラベルが存在しない場合は警告を表示（自動作成はしない）
 - `chore:`や`test:`より`feat:`や`fix:`を優先（本質的な変更を重視）
+
+**ラベル付与コマンド**:
+```bash
+# 方法1: gh pr editを使用（推奨）
+gh pr edit $PR_NUMBER --add-label "enhancement,ui"
+
+# 方法2: gh apiを使用する場合
+gh api repos/$OWNER/$REPO/issues/$PR_NUMBER/labels \
+  --method POST \
+  --header "Accept: application/vnd.github.v3+json" \
+  --field labels='["enhancement","ui"]'
+
+# 注意: -f labels[]=enhancement はzshで動作しない
+```
 
 ラベルマッピングルールは [shared/label-definitions.md](../shared/label-definitions.md) を参照。
 
