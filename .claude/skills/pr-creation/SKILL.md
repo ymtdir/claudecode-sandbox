@@ -101,16 +101,17 @@ PR作成成功後、適切なラベルを自動付与します。
 
 **ラベル付与コマンド**:
 ```bash
-# 方法1: gh pr editを使用（推奨）
-gh pr edit $PR_NUMBER --add-label "enhancement,ui"
+# 方法1: JSONをパイプで渡す（最も確実）
+echo '{"labels":["enhancement","ui"]}' | \
+  gh api repos/$OWNER/$REPO/issues/$PR_NUMBER/labels \
+  --method POST --input -
 
-# 方法2: gh apiを使用する場合
-gh api repos/$OWNER/$REPO/issues/$PR_NUMBER/labels \
-  --method POST \
-  --header "Accept: application/vnd.github.v3+json" \
-  --field labels='["enhancement","ui"]'
+# 方法2: gh pr editを使用（権限によってはエラーになる可能性）
+# gh pr edit $PR_NUMBER --add-label "enhancement,ui"
 
-# 注意: -f labels[]=enhancement はzshで動作しない
+# 注意:
+# - -f labels[]=enhancement はzshで動作しない
+# - --field labels='["enhancement","ui"]' は文字列として解釈される
 ```
 
 ラベルマッピングルールは [shared/label-definitions.md](../shared/label-definitions.md) を参照。
