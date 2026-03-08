@@ -81,8 +81,9 @@ export const Card: React.FC<CardProps> = ({
 
   // タップ可能な場合はTouchableOpacityを使用
   if (pressable && onPress) {
-    // TouchableOpacityに渡すpropsを限定
-    const { onBlur, onFocus, ...touchableProps } = restProps as any;
+    // ViewPropsからTouchableOpacityに渡せないプロパティを除外
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { onBlur, onFocus, ...touchableProps } = restProps as ViewProps;
     return (
       <TouchableOpacity
         style={cardStyles}
