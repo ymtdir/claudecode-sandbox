@@ -3,12 +3,14 @@ import { Card } from '../../components/ui/Card';
 import { Typography } from '../../components/ui/Typography';
 import { Button } from '../../components/ui/Button';
 import { useNavigate } from 'react-router-dom';
+import { useCurrentDate } from '../../hooks/useCurrentDate';
 
 /**
  * 週表示画面
  */
 export const WeekViewScreen: React.FC = () => {
   const navigate = useNavigate();
+  const { weekRange, date } = useCurrentDate();
 
   return (
     <div style={{ padding: '20px' }}>
@@ -36,7 +38,7 @@ export const WeekViewScreen: React.FC = () => {
           }}
         >
           <Button variant="outlined">前週</Button>
-          <Typography variant="h2">2026年3月9日 - 3月15日</Typography>
+          <Typography variant="h2">{weekRange}</Typography>
           <Button variant="outlined">翌週</Button>
         </div>
 
@@ -51,37 +53,33 @@ export const WeekViewScreen: React.FC = () => {
             borderRadius: '8px',
           }}
         >
-          {[
-            { day: '日', date: '9' },
-            { day: '月', date: '10' },
-            { day: '火', date: '11' },
-            { day: '水', date: '12' },
-            { day: '木', date: '13' },
-            { day: '金', date: '14' },
-            { day: '土', date: '15' },
-          ].map((item) => (
-            <div key={item.date} style={{ textAlign: 'center' }}>
-              <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>
-                {item.day}
+          {['日', '月', '火', '水', '木', '金', '土'].map((day, index) => {
+            const weekDate = new Date();
+            weekDate.setDate(date - weekDate.getDay() + index);
+            return (
+              <div key={day} style={{ textAlign: 'center' }}>
+                <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>
+                  {day}
+                </div>
+                <div style={{ fontSize: '20px', marginBottom: '16px' }}>
+                  {weekDate.getDate()}
+                </div>
+                <div
+                  style={{
+                    minHeight: '300px',
+                    background: 'white',
+                    borderRadius: '4px',
+                    padding: '8px',
+                    border: '1px solid #e0e0e0',
+                  }}
+                >
+                  <Typography color="secondary" variant="body2">
+                    タスク
+                  </Typography>
+                </div>
               </div>
-              <div style={{ fontSize: '20px', marginBottom: '16px' }}>
-                {item.date}
-              </div>
-              <div
-                style={{
-                  minHeight: '300px',
-                  background: 'white',
-                  borderRadius: '4px',
-                  padding: '8px',
-                  border: '1px solid #e0e0e0',
-                }}
-              >
-                <Typography color="secondary" variant="body2">
-                  タスク
-                </Typography>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </Card>
     </div>

@@ -13,8 +13,9 @@ export const ReminderScreen: React.FC = () => {
   const navigate = useNavigate();
   const { taskId } = useParams<{ taskId: string }>();
 
+  const today = new Date().toISOString().split('T')[0];
   const [enabled, setEnabled] = useState(true);
-  const [date, setDate] = useState('2026-03-09');
+  const [date, setDate] = useState(today);
   const [time, setTime] = useState('09:00');
   const [repeatType, setRepeatType] = useState('none');
   const [notification, setNotification] = useState(true);
@@ -100,14 +101,18 @@ export const ReminderScreen: React.FC = () => {
                   label="通知日"
                   type="date"
                   value={date}
-                  onChange={(e) => setDate(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setDate(e.target.value)
+                  }
                   fullWidth
                 />
                 <Input
                   label="通知時刻"
                   type="time"
                   value={time}
-                  onChange={(e) => setTime(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setTime(e.target.value)
+                  }
                   fullWidth
                 />
               </div>
@@ -124,7 +129,9 @@ export const ReminderScreen: React.FC = () => {
                 </label>
                 <select
                   value={repeatType}
-                  onChange={(e) => setRepeatType(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                    setRepeatType(e.target.value)
+                  }
                   style={{
                     width: '100%',
                     padding: '8px 12px',

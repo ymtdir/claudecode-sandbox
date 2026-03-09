@@ -3,12 +3,14 @@ import { Card } from '../../components/ui/Card';
 import { Typography } from '../../components/ui/Typography';
 import { Button } from '../../components/ui/Button';
 import { useNavigate } from 'react-router-dom';
+import { useCurrentDate } from '../../hooks/useCurrentDate';
 
 /**
  * 日表示画面
  */
 export const DayViewScreen: React.FC = () => {
   const navigate = useNavigate();
+  const { formattedDateWithDay } = useCurrentDate();
 
   return (
     <div style={{ padding: '20px' }}>
@@ -36,7 +38,7 @@ export const DayViewScreen: React.FC = () => {
           }}
         >
           <Button variant="outlined">前日</Button>
-          <Typography variant="h2">2026年3月9日（日）</Typography>
+          <Typography variant="h2">{formattedDateWithDay}</Typography>
           <Button variant="outlined">翌日</Button>
         </div>
 

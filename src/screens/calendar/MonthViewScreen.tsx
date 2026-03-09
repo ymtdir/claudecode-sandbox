@@ -3,12 +3,14 @@ import { Card } from '../../components/ui/Card';
 import { Typography } from '../../components/ui/Typography';
 import { Button } from '../../components/ui/Button';
 import { useNavigate } from 'react-router-dom';
+import { useCurrentDate } from '../../hooks/useCurrentDate';
 
 /**
  * 月表示画面
  */
 export const MonthViewScreen: React.FC = () => {
   const navigate = useNavigate();
+  const { formattedMonth } = useCurrentDate();
 
   return (
     <div style={{ padding: '20px' }}>
@@ -36,7 +38,7 @@ export const MonthViewScreen: React.FC = () => {
           }}
         >
           <Button variant="outlined">前月</Button>
-          <Typography variant="h2">2026年3月</Typography>
+          <Typography variant="h2">{formattedMonth}</Typography>
           <Button variant="outlined">翌月</Button>
         </div>
 

@@ -13,9 +13,10 @@ export const TaskEditScreen: React.FC = () => {
   const { taskId } = useParams<{ taskId: string }>();
 
   // 実際のアプリでは、taskIdを使ってタスクデータを取得
+  const today = new Date().toISOString().split('T')[0];
   const [title, setTitle] = useState('サンプルタスク');
   const [description, setDescription] = useState('このタスクは編集可能です');
-  const [date, setDate] = useState('2026-03-09');
+  const [date, setDate] = useState(today);
   const [time, setTime] = useState('10:00');
   const [completed, setCompleted] = useState(false);
 
@@ -84,7 +85,9 @@ export const TaskEditScreen: React.FC = () => {
           <Input
             label="タスク名"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setTitle(e.target.value)
+            }
             placeholder="タスク名を入力"
             fullWidth
             required
@@ -102,7 +105,9 @@ export const TaskEditScreen: React.FC = () => {
             </label>
             <textarea
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setDescription(e.target.value)
+              }
               placeholder="タスクの詳細を入力"
               style={{
                 width: '100%',
@@ -127,14 +132,18 @@ export const TaskEditScreen: React.FC = () => {
               label="日付"
               type="date"
               value={date}
-              onChange={(e) => setDate(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setDate(e.target.value)
+              }
               fullWidth
             />
             <Input
               label="時刻"
               type="time"
               value={time}
-              onChange={(e) => setTime(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setTime(e.target.value)
+              }
               fullWidth
             />
           </div>
@@ -154,7 +163,9 @@ export const TaskEditScreen: React.FC = () => {
                 type="checkbox"
                 id="completed"
                 checked={completed}
-                onChange={(e) => setCompleted(e.target.checked)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setCompleted(e.target.checked)
+                }
                 style={{ width: '20px', height: '20px' }}
               />
               <label htmlFor="completed" style={{ cursor: 'pointer' }}>

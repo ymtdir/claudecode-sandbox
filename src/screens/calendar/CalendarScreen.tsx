@@ -4,12 +4,14 @@ import { Typography } from '../../components/ui/Typography';
 import { Button } from '../../components/ui/Button';
 import { Grid } from '../../components/ui/Grid';
 import { useNavigate } from 'react-router-dom';
+import { useCurrentDate } from '../../hooks/useCurrentDate';
 
 /**
  * カレンダーメイン画面
  */
 export const CalendarScreen: React.FC = () => {
   const navigate = useNavigate();
+  const { formattedMonth } = useCurrentDate();
 
   return (
     <div style={{ padding: '20px' }}>
@@ -21,7 +23,7 @@ export const CalendarScreen: React.FC = () => {
         <Grid item xs={12} md={8}>
           <Card>
             <Typography variant="h2" style={{ marginBottom: '16px' }}>
-              2026年3月
+              {formattedMonth}
             </Typography>
             <div
               style={{

@@ -57,7 +57,9 @@ export const TaskAddScreen: React.FC = () => {
           <Input
             label="タスク名"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setTitle(e.target.value)
+            }
             placeholder="タスク名を入力"
             fullWidth
             required
@@ -75,7 +77,9 @@ export const TaskAddScreen: React.FC = () => {
             </label>
             <textarea
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setDescription(e.target.value)
+              }
               placeholder="タスクの詳細を入力"
               style={{
                 width: '100%',
@@ -100,14 +104,18 @@ export const TaskAddScreen: React.FC = () => {
               label="日付"
               type="date"
               value={date}
-              onChange={(e) => setDate(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setDate(e.target.value)
+              }
               fullWidth
             />
             <Input
               label="時刻"
               type="time"
               value={time}
-              onChange={(e) => setTime(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setTime(e.target.value)
+              }
               fullWidth
             />
           </div>

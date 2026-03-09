@@ -185,7 +185,9 @@ export const SettingsScreen: React.FC = () => {
               style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
             >
               <Typography variant="body2">バージョン: 1.0.0</Typography>
-              <Typography variant="body2">最終更新日: 2026年3月9日</Typography>
+              <Typography variant="body2">
+                最終更新日: {new Date().toLocaleDateString('ja-JP')}
+              </Typography>
               <Typography variant="body2">ライセンス: MIT</Typography>
               <div style={{ marginTop: '12px', display: 'flex', gap: '8px' }}>
                 <Button variant="outlined">利用規約</Button>
