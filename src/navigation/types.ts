@@ -42,11 +42,14 @@ export type SettingsStackParamList = {
 };
 
 // 画面プロップスの型定義用のユーティリティ型
-export type ScreenProps<T extends Record<string, any>, K extends keyof T> = {
+export type ScreenProps<
+  T extends Record<string, unknown>,
+  K extends keyof T,
+> = {
   route?: {
     params?: T[K];
   };
-  navigation?: any; // React Routerでは使用しないが、互換性のため定義
+  navigation?: unknown; // React Routerでは使用しないが、互換性のため定義
 };
 
 // タスクの型定義（仮）
