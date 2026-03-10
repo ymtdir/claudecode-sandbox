@@ -75,6 +75,14 @@ export const CalendarScreen: React.FC = () => {
             <Typography color="secondary">
               タスクリストがここに表示されます
             </Typography>
+            <Button
+              onClick={() => navigate('/task/add')}
+              variant="primary"
+              fullWidth
+              style={{ marginTop: '16px' }}
+            >
+              ＋ タスクを追加
+            </Button>
           </Card>
         </Grid>
       </Grid>

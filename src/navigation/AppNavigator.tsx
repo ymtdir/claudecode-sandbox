@@ -9,8 +9,9 @@ import { WeekViewScreen } from '../screens/calendar/WeekViewScreen';
 import { DayViewScreen } from '../screens/calendar/DayViewScreen';
 import { StatisticsScreen } from '../screens/Statistics/StatisticsScreen';
 import { SettingsScreen } from '../screens/Settings/SettingsScreen';
-import { TaskAddScreen } from '../screens/modals/TaskAddScreen';
-import { TaskEditScreen } from '../screens/modals/TaskEditScreen';
+// Issue #20で実装したタスク画面
+import { TaskAddScreen } from '../screens/Task/TaskAddScreen';
+import { TaskEditScreen } from '../screens/Task/TaskEditScreen';
 import { ReminderScreen } from '../screens/modals/ReminderScreen';
 
 /**
