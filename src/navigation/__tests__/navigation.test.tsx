@@ -32,11 +32,11 @@ vi.mock('../../screens/Settings/SettingsScreen', () => ({
   ),
 }));
 
-vi.mock('../../screens/modals/TaskAddScreen', () => ({
+vi.mock('../../screens/Task/TaskAddScreen', () => ({
   TaskAddScreen: () => <div data-testid="task-add-screen">Task Add Screen</div>,
 }));
 
-vi.mock('../../screens/modals/TaskEditScreen', () => ({
+vi.mock('../../screens/Task/TaskEditScreen', () => ({
   TaskEditScreen: () => (
     <div data-testid="task-edit-screen">Task Edit Screen</div>
   ),
