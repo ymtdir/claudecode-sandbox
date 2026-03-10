@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { View, ScrollView, Text, TouchableOpacity } from 'react-native';
-import { styles } from './MonthViewScreen.styles';
+import './MonthViewScreen.css';
 import {
   getTasksByDate,
   updateTaskCompletion,
@@ -92,80 +91,86 @@ export const MonthViewScreen: React.FC = () => {
   }, [currentMonth]);
 
   return (
-    <View style={styles.container}>
+    <div className="month-view-container">
       {/* ヘッダー */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>UnifiedCal</Text>
-        <View style={styles.headerIcons}>{/* アイコンプレースホルダー */}</View>
-      </View>
+      <div className="month-view-header">
+        <h1 className="header-title">UnifiedCal</h1>
+        <div className="header-icons">{/* アイコンプレースホルダー */}</div>
+      </div>
 
       {/* 月選択 */}
-      <View style={styles.monthSelector}>
-        <TouchableOpacity onPress={() => handleMonthChange('prev')}>
-          <Text style={styles.monthArrow}>{'＜'}</Text>
-        </TouchableOpacity>
-        <Text style={styles.monthText}>{monthYearString}</Text>
-        <TouchableOpacity onPress={() => handleMonthChange('next')}>
-          <Text style={styles.monthArrow}>{'＞'}</Text>
-        </TouchableOpacity>
-      </View>
+      <div className="month-selector">
+        <button
+          className="month-arrow"
+          onClick={() => handleMonthChange('prev')}
+        >
+          {'＜'}
+        </button>
+        <span className="month-text">{monthYearString}</span>
+        <button
+          className="month-arrow"
+          onClick={() => handleMonthChange('next')}
+        >
+          {'＞'}
+        </button>
+      </div>
 
       {/* カレンダーグリッド - プレースホルダー */}
-      <View style={styles.calendarContainer}>
-        <Text style={styles.placeholderText}>
+      <div className="calendar-container">
+        <div className="placeholder-text">
           カレンダーグリッドがここに表示されます
-        </Text>
-        <Text style={styles.debugInfo}>
+        </div>
+        <div className="debug-info">
           選択日: {selectedDate} | タスク数: {selectedDateTasks.length}
-        </Text>
-      </View>
+        </div>
+      </div>
 
       {/* プログレスバー */}
-      <View style={styles.progressContainer}>
-        <Text style={styles.progressText}>
+      <div className="progress-container">
+        <div className="progress-text">
           今日のタスク ({completedCount}/{selectedDateTasks.length}完了)
-        </Text>
-        <View style={styles.progressBar}>
-          <View
-            style={[styles.progressFill, { width: `${completionRate}%` }]}
+        </div>
+        <div className="progress-bar">
+          <div
+            className="progress-fill"
+            style={{ width: `${completionRate}%` }}
           />
-        </View>
-        <Text style={styles.progressPercent}>{completionRate}%</Text>
-      </View>
+        </div>
+        <div className="progress-percent">{completionRate}%</div>
+      </div>
 
       {/* タスクリスト */}
-      <ScrollView style={styles.taskListContainer}>
+      <div className="task-list-container">
         {selectedDateTasks.map((task) => (
-          <TouchableOpacity
+          <div
             key={task.id}
-            style={styles.taskItem}
-            onPress={() => handleTaskComplete(task.id)}
+            className="task-item"
+            onClick={() => handleTaskComplete(task.id)}
           >
-            <View style={styles.taskCheckbox}>
-              {task.completed && <Text style={styles.checkmark}>✓</Text>}
-            </View>
-            <View style={styles.taskContent}>
-              <Text
-                style={[
-                  styles.taskTitle,
-                  task.completed && styles.taskTitleCompleted,
-                ]}
+            <div className="task-checkbox">
+              {task.completed && <span className="checkmark">✓</span>}
+            </div>
+            <div className="task-content">
+              <span
+                className={`task-title ${
+                  task.completed ? 'task-title-completed' : ''
+                }`}
               >
                 {task.title}
-              </Text>
-              {task.time && <Text style={styles.taskTime}>{task.time}</Text>}
-            </View>
-          </TouchableOpacity>
+              </span>
+              {task.time && <span className="task-time">{task.time}</span>}
+            </div>
+          </div>
         ))}
         {selectedDateTasks.length === 0 && (
-          <Text style={styles.emptyTaskText}>タスクがありません</Text>
+          <div className="empty-task-text">タスクがありません</div>
         )}
-      </ScrollView>
+      </div>
 
       {/* タスク追加ボタン */}
-      <TouchableOpacity style={styles.addTaskButton}>
-        <Text style={styles.addTaskButtonText}>＋ タスクを追加</Text>
-      </TouchableOpacity>
-    </View>
+      <button className="add-task-button">
+        <span className="add-task-button-text">＋ タスクを追加</span>
+      </button>
+    </div>
   );
 };
