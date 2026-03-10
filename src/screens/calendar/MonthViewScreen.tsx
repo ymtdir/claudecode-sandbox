@@ -3,9 +3,9 @@ import { View, ScrollView, Text, TouchableOpacity } from 'react-native';
 import { styles } from './MonthViewScreen.styles';
 import {
   getTasksByDate,
-  getTaskCountByDate,
   updateTaskCompletion,
-  postponeTask,
+  // getTaskCountByDate, // 将来CalendarGridで使用予定
+  // postponeTask, // スワイプジェスチャー実装時に使用予定
 } from '../../mocks/taskData';
 
 /**
@@ -29,8 +29,8 @@ export const MonthViewScreen: React.FC = () => {
   );
 
   // タスク数マップ（将来CalendarGridで使用）
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const taskCountMap = useMemo(() => getTaskCountByDate(), []);
+  // 現在は未使用のため、必要になった時に実装
+  // const taskCountMap = useMemo(() => getTaskCountByDate(), []);
 
   // 完了タスク数
   const completedCount = useMemo(
@@ -45,10 +45,10 @@ export const MonthViewScreen: React.FC = () => {
   }, [completedCount, selectedDateTasks.length]);
 
   // 日付選択ハンドラ（CalendarGridで使用予定）
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleDateSelect = useCallback((date: string) => {
-    setSelectedDate(date);
-  }, []);
+  // 現在は未使用のため、必要になった時に実装
+  // const handleDateSelect = useCallback((date: string) => {
+  //   setSelectedDate(date);
+  // }, []);
 
   // 月変更ハンドラ
   const handleMonthChange = useCallback((direction: 'prev' | 'next') => {
@@ -77,12 +77,12 @@ export const MonthViewScreen: React.FC = () => {
   );
 
   // タスク延期ハンドラ（スワイプジェスチャーで使用予定）
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleTaskPostpone = useCallback((taskId: string) => {
-    postponeTask(taskId);
-    // 状態を更新（実際のアプリではReduxなどで管理）
-    setSelectedDate((prev) => prev); // 再レンダリングをトリガー
-  }, []);
+  // 現在は未使用のため、必要になった時に実装
+  // const handleTaskPostpone = useCallback((taskId: string) => {
+  //   postponeTask(taskId);
+  //   // 状態を更新（実際のアプリではReduxなどで管理）
+  //   setSelectedDate((prev) => prev); // 再レンダリングをトリガー
+  // }, []);
 
   // 月のフォーマット
   const monthYearString = useMemo(() => {
