@@ -4,14 +4,21 @@
 
 // 基本型のエクスポート
 export * from './common';
-export * from './task';
 export * from './calendar';
 export * from './user';
 
-// Enumのエクスポート
-export { TaskStatus } from './task';
-export { TaskPriority } from './task';
-export { RepeatType } from './task';
+// task.tsからの選択的エクスポート（重複を避ける）
+export type {
+  Category,
+  Priority,
+  TaskStatus,
+  ReminderType,
+  Location,
+  RepeatRule,
+  Reminder,
+  Task,
+  TaskInput,
+} from './task';
 
 // 型ユーティリティ
 export type Nullable<T> = T | null;
