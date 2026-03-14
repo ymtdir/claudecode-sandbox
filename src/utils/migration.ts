@@ -3,7 +3,7 @@
  */
 
 import { TaskRepository } from '../repositories';
-import { TaskSchema } from '../database/schema';
+import type { TaskSchema } from '../database/schema';
 import type { Task } from '../types/task';
 
 const MIGRATION_KEY = 'db_migration_completed';
@@ -83,8 +83,9 @@ export class DatabaseMigration {
 
   /**
    * LocalStorage内の古いデータをクリーンアップ
+   * 注意: このメソッドは破壊的な操作です。実行前にバックアップを取ることを推奨します。
    */
-  private static cleanupLocalStorage(): void {
+  static cleanupLocalStorage(): void {
     // タスクデータを削除
     localStorage.removeItem(TASKS_STORAGE_KEY);
 
