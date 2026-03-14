@@ -1,6 +1,6 @@
 import { db } from '../database';
 import { TaskModel } from '../database/models';
-import { TaskSchema } from '../database/schema';
+import type { TaskSchema } from '../database/schema';
 
 export class TaskRepository {
   /**

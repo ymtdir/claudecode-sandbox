@@ -1,6 +1,6 @@
 import { db } from '../database';
 import { CalendarModel } from '../database/models';
-import { CalendarSchema } from '../database/schema';
+import type { CalendarSchema } from '../database/schema';
 
 export class CalendarRepository {
   /**

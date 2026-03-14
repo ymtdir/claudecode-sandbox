@@ -1,6 +1,6 @@
 import { db } from '../database';
 import { ReminderModel } from '../database/models';
-import { ReminderSchema } from '../database/schema';
+import type { ReminderSchema } from '../database/schema';
 
 export class ReminderRepository {
   /**
