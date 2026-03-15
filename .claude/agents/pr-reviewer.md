@@ -196,3 +196,12 @@ GitHub Actionsと連携して自動実行:
 - PR作成時
 - コミット追加時
 - `/review`コメント時
+
+## トラブルシューティング
+
+| 症状 | 原因 | 対処 |
+|------|------|------|
+| `mcp__github__pull_request_read` がエラー | GitHub MCP未設定または認証切れ | `gh auth status` で確認、再認証 |
+| diffが大きすぎてレビューが不完全 | 変更ファイル数が多い | `get_files` でファイル一覧を取得し、重要度順に優先レビュー |
+| インラインコメントの行番号がずれる | diffの行番号とファイルの行番号の混同 | `get_diff` の差分行番号を使用（ファイル行番号ではない） |
+| pending reviewの作成に失敗 | 既存のpending reviewが残っている | `delete_pending` で既存レビューを削除してから再作成 |
