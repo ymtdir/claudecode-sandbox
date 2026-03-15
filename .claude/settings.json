@@ -1,71 +1,64 @@
 {
   "permissions": {
     "allow": [
-      // ファイル編集
-      "Edit(*)",
-      "Write(*)",
-
-      // スキル
-      "Skill(*)",
-
-      // Git操作
-      "Bash(git *)",
-      "Bash(gh *)",
-
-      // npm/node関連
-      "Bash(npm *)",
-      "Bash(npx *)",
-      "Bash(node *)",
-
-      // ファイル操作
-      "Bash(ls*)",
-      "Bash(tree*)",
-      "Bash(pwd)",
-      "Bash(mkdir *)",
-      "Bash(touch *)",
-      "Bash(cp *)",
-      "Bash(mv *)",
-
-      // 開発ツール
-      "Bash(which *)",
-      "Bash(curl *)",
-
-      // Web取得
-      "WebFetch(*)",
-
-      // MCP
-      "mcp__github__*",
-      "mcp__ide__*"
+      "Bash(find:*)",
+      "Bash(rg:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)"
     ],
     "deny": [
-      // システム破壊
-      "Bash(rm -rf /)",
-      "Bash(rm -rf /*)",
-      "Bash(rm -rf ~)",
-      "Bash(rm -rf $HOME)",
-
-      // システムファイル編集
-      "Edit(/etc/*)",
-      "Write(/etc/*)",
-      "Edit(/System/*)",
-      "Write(/System/*)",
-      "Edit(/usr/*)",
-      "Write(/usr/*)",
-
-      // 環境変数の危険な変更
-      "Bash(export PATH=)",
-      "Bash(unset PATH)",
-      "Bash(export HOME=)",
-
-      // ディスク操作
-      "Bash(dd *)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git reset:*)",
+      "Bash(git rebase:*)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(./config/credentials.json)",
+      "Read(./build)"
     ],
     "ask": []
   },
+  "skills": {
+    "allowed": [
+      "setup-project",
+      "prd-writing",
+      "functional-design",
+      "architecture-design",
+      "repository-structure",
+      "development-guidelines",
+      "glossary-creation",
+      "steering",
+      "issue-tracking",
+      "issue-resolution",
+      "pr-creation"
+    ]
+  },
   "hooks": {
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /System/Library/Sounds/Glass.aiff"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /System/Library/Sounds/Funk.aiff"
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
-        "matcher": "Edit|Write",
+        "matcher": "Edit|Write|MultiEdit",
         "hooks": [
           {
             "type": "command",
