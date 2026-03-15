@@ -1,6 +1,6 @@
 ---
 name: pr-reviewer
-description: Pull Requestを詳細にレビューし、具体的な改善提案を行うサブエージェント
+description: Pull RequestをCodeRabbitスタイルで詳細レビューし具体的な改善提案を行う。コード品質・セキュリティ・パフォーマンス・テスト・アーキテクチャをチェックしインラインコメントと総評をGitHubに投稿。/create-prで自動使用。
 tools: Read, Grep, mcp__github__*
 ---
 
