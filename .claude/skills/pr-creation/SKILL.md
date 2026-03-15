@@ -19,7 +19,7 @@ allowed-tools: Read, Write, Bash, Glob, mcp__github__*
 
 ## PR作成プロセス
 
-**注**: ラベル判定ルールは[shared/label-definitions.md](../shared/label-definitions.md)を参照
+**注**: ラベル判定ルールは[shared/label-definitions.md](../shared/references/label-definitions.md)を参照
 
 ### ステップ1: ブランチ情報の収集
 
@@ -49,7 +49,7 @@ git diff --name-only origin/main...HEAD
 関連Issueが存在する場合は、**Issueのラベルをそのまま継承**します。
 Issueがない場合のみ、コミットプレフィックスから判定します。
 
-判定ルールの詳細は [shared/label-definitions.md](../shared/label-definitions.md) を参照。
+判定ルールの詳細は [shared/label-definitions.md](../shared/references/label-definitions.md) を参照。
 
 ### ステップ4: テンプレートの適用
 
@@ -116,7 +116,7 @@ echo '{"labels":["enhancement","ui"]}' | \
 # - --field labels='["enhancement","ui"]' は文字列として解釈される
 ```
 
-ラベルマッピングルールは [shared/label-definitions.md](../shared/label-definitions.md) を参照。
+ラベルマッピングルールは [shared/label-definitions.md](../shared/references/label-definitions.md) を参照。
 
 ### ステップ7: 自動レビュー実行
 

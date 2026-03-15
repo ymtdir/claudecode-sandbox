@@ -19,12 +19,12 @@ allowed-tools: Read, Write, Bash, Glob, mcp__github__*
 
 ## Issue作成プロセス
 
-**注**: ラベル判定ルールは[shared/label-definitions.md](../shared/label-definitions.md)を参照
+**注**: ラベル判定ルールは[shared/label-definitions.md](../shared/references/label-definitions.md)を参照
 
 ### ステップ1: 課題の分析と分類
 
 課題の内容からラベルを自動判定します。
-判定ルールの詳細は [shared/label-definitions.md](../shared/label-definitions.md) を参照してください。
+判定ルールの詳細は [shared/label-definitions.md](../shared/references/label-definitions.md) を参照してください。
 
 判定方法：
 1. タイトルと本文からキーワードを検索
@@ -78,7 +78,7 @@ mcp__github__issue_write({
 
 ## ラベリング
 
-使用するラベルは [shared/label-definitions.md](../shared/label-definitions.md) で定義されています。
+使用するラベルは [shared/label-definitions.md](../shared/references/label-definitions.md) で定義されています。
 
 - **自動付与**: キーワードマッチに基づいて種類ラベル（bug, enhancement等）を付与
 - **手動付与**: 必要に応じて補助ラベル（good first issue, help wanted等）を追加

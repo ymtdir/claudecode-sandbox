@@ -20,7 +20,7 @@ claude
   - docs/functional-design.md
   - docs/architecture.md
 - ラベル定義を確認すること：
-  - **必須**: `.claude/skills/shared/label-definitions.md`を参照
+  - **必須**: `.claude/skills/shared/references/label-definitions.md`を参照
 
 ## 手順
 
@@ -53,7 +53,7 @@ claude
 
 各Issueの作成手順：
 
-1. **ラベル選択**: `.claude/skills/shared/label-definitions.md`で定義された標準ラベルから適切なものを選択
+1. **ラベル選択**: `.claude/skills/shared/references/label-definitions.md`で定義された標準ラベルから適切なものを選択
    - ⚠️ 定義ファイルに記載されていないラベルは使用禁止
 
 2. **テンプレート適用**: enhancementテンプレートを基本使用
