@@ -1,5 +1,5 @@
 ---
-description: 現在のブランチの変更内容を分析してPull Requestを作成
+description: 現在のブランチからPull Requestを作成。変更分析→PR本文生成→ラベル適用→自動レビュー。使用例: /create-pr
 ---
 
 # Pull Request作成
