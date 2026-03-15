@@ -1,6 +1,6 @@
 ---
 name: pr-creation
-description: 現在のブランチの変更内容を分析し、適切なテンプレートでPull Requestを作成
+description: 現在のブランチの変更からPull Requestを作成し自動レビューする。「PR作成」「/create-pr」「pull request」と言われた時、または実装完了後レビュー準備ができた時に使用。変更分析→テンプレート選択→PR作成→ラベル適用→自動レビュー。
 allowed-tools: Read, Write, Bash, Glob, mcp__github__*
 ---
 
@@ -54,10 +54,12 @@ Issueがない場合のみ、コミットプレフィックスから判定しま
 ### ステップ4: テンプレートの適用
 
 判定された種類に応じてテンプレートを選択:
-- **bug** → `templates/bug.md`
-- **enhancement** → `templates/enhancement.md`
+- **bug** → `./assets/templates/bug.md`
+- **enhancement** → `./assets/templates/enhancement.md`
 - **documentation** → シンプルなドキュメント更新形式
-- **refactor** → `templates/refactor.md`
+- **refactor** → `./assets/templates/refactor.md`
+
+コミットプレフィックスの詳細は `../shared/references/commit-conventions.md` を参照。
 
 ### ステップ5: PR作成
 

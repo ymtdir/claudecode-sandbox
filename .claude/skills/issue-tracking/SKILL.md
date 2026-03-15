@@ -1,6 +1,6 @@
 ---
 name: issue-tracking
-description: 開発中に発見した課題を適切なテンプレートを使用してGitHub Issueとして作成する
+description: 開発中に発見した課題をGitHub Issueとして作成する。「Issue作成」「create issue」と言われた時、またはバグ・機能追加・リファクタリングの必要性が発見された時に使用。bug/enhancement/refactorに分類しラベルを適用。
 allowed-tools: Read, Write, Bash, Glob, mcp__github__*
 ---
 
@@ -46,10 +46,10 @@ Glob('.steering/*/requirements.md')
 
 選択されたテンプレートを読み込み、情報を埋め込み：
 
-- **bug** → `templates/bug.md`
-- **enhancement** → `templates/enhancement.md`
+- **bug** → `assets/templates/bug.md`
+- **enhancement** → `assets/templates/enhancement.md`
 - **documentation** → シンプルな説明形式
-- **refactor** → `templates/refactor.md`
+- **refactor** → `assets/templates/refactor.md`
 
 ### ステップ4: GitHub Issue作成
 
@@ -116,3 +116,12 @@ GitHub MCPサーバーの設定を確認するよう案内
 
 ### documentation（テンプレートなし）
 - シンプルな説明形式で作成
+
+## トラブルシューティング
+
+| 症状 | 原因 | 対処 |
+|------|------|------|
+| `mcp__github__issue_write`がエラー | GitHub MCP未設定または認証切れ | `gh auth status`で確認、再認証 |
+| ラベルが付与されない | リポジトリにラベルが存在しない | GitHubリポジトリのLabels設定を確認 |
+| テンプレートが見つからない | パスの不一致 | `assets/templates/`配下にファイルが存在するか確認 |
+| Issue分類が不適切 | キーワードマッチの曖昧さ | ユーザーに種類を確認してから作成 |

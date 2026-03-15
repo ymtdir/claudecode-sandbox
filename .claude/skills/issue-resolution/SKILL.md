@@ -1,6 +1,6 @@
 ---
 name: issue-resolution
-description: GitHub Issueを解決し、作業単位で適切にコミットしながら進める
+description: GitHub Issueをブランチ作成・ステアリング・原子的コミットで解決する。「Issueを解決」「/resolve-issue」と言われた時、またはIssue番号を指定された時に使用。ブランチ作成→ステアリング→タスク毎コミット→品質チェック。
 allowed-tools: Read, Write, Edit, Bash, Glob, Task, mcp__github__*
 ---
 
@@ -125,25 +125,7 @@ npm run typecheck
 
 ### コミットメッセージ規則
 
-```
-[prefix]: [日本語での説明]
-
-プレフィックス:
-- feat: 新機能
-- fix: バグ修正
-- docs: ドキュメント
-- style: コードスタイル（フォーマット等）
-- refactor: リファクタリング
-- test: テスト追加・修正
-- chore: ビルド・補助ツール
-
-例:
-feat: ログインバリデーション機能を追加
-fix: ユーザーサービスのnullポインタエラーを修正
-refactor: 認証モジュールのエラー処理を改善
-test: ユーザー登録のユニットテストを追加
-docs: APIドキュメントを更新
-```
+コミット規約の詳細（プレフィックス一覧・作業単位の例）は `../shared/references/commit-conventions.md` を参照。
 
 ## Issueとの連携
 
