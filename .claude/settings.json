@@ -1,4 +1,6 @@
 {
+  "language": "ja",
+  "enableAllProjectMcpServers": true,
   "permissions": {
     "allow": [
       "Bash(find:*)",
@@ -19,6 +21,16 @@
       "Read(./build)"
     ],
     "ask": []
+  },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "excludedCommands": ["git", "docker"],
+    "allowUnsandboxedCommands": false,
+    "network": {
+      "allowedDomains": ["github.com", "*.npmjs.org"],
+      "allowLocalBinding": true
+    }
   },
   "skills": {
     "allowed": [
@@ -68,6 +80,8 @@
       }
     ]
   },
-  "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": ["github"]
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh"
+  }
 }
