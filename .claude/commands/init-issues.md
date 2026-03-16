@@ -60,7 +60,7 @@ claude
 
 3. **依存関係記述**: 前のステップへの依存を明記（例: #15が前提）
 
-4. **API実行**: `gh issue create`でIssue作成
+4. **API実行**: `mcp__github__issue_write`でIssue作成
 
 ### ステップ4: 結果レポート
 
