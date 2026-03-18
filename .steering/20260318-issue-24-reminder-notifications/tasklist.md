@@ -30,81 +30,81 @@
 
 ## フェーズ1: 基本セットアップ
 
-- [ ] NotificationServiceクラスの基本実装
-  - [ ] src/services/NotificationService.tsを作成
-  - [ ] 権限チェックメソッドの実装
-  - [ ] 権限リクエストメソッドの実装
+- [x] NotificationServiceクラスの基本実装
+  - [x] src/services/NotificationService.tsを作成
+  - [x] 権限チェックメソッドの実装
+  - [x] 権限リクエストメソッドの実装
 
-- [ ] 型定義の追加
-  - [ ] src/types/reminder.tsを作成
-  - [ ] Reminder interfaceの定義
-  - [ ] RepeatRule interfaceの定義
-  - [ ] NotificationOptions typeの定義
+- [x] 型定義の追加
+  - [x] src/types/reminder.tsを作成
+  - [x] Reminder interfaceの定義
+  - [x] RepeatRule interfaceの定義
+  - [x] NotificationOptions typeの定義
 
-- [ ] Reduxスライスの作成
-  - [ ] src/store/slices/reminderSlice.tsを作成
-  - [ ] リマインダー状態の定義
-  - [ ] アクション・リデューサーの実装
+- [x] Reduxスライスの作成
+  - [x] src/store/slices/reminderSlice.tsを作成
+  - [x] リマインダー状態の定義
+  - [x] アクション・リデューサーの実装
 
 ## フェーズ2: UI実装
 
-- [ ] ReminderSettings コンポーネントの作成
-  - [ ] src/components/ReminderSettings/ReminderSettings.tsxを作成
-  - [ ] 時刻通知ボタンの実装
-  - [ ] 事前通知オプション（10分前、30分前、1時間前）
-  - [ ] スタイリング
+- [x] ReminderSettings コンポーネントの作成
+  - [x] src/components/ReminderSettings/ReminderSettings.tsxを作成
+  - [x] 時刻通知ボタンの実装
+  - [x] 事前通知オプション（10分前、30分前、1時間前）
+  - [x] スタイリング
 
-- [ ] リマインダー表示コンポーネントの作成
-  - [ ] src/components/ReminderList/ReminderList.tsxを作成
-  - [ ] アクティブなリマインダーのリスト表示
-  - [ ] リマインダーの有効/無効切り替え
-  - [ ] リマインダー削除機能
+- [x] リマインダー表示コンポーネントの作成
+  - [x] src/components/ReminderList/ReminderList.tsxを作成
+  - [x] アクティブなリマインダーのリスト表示
+  - [x] リマインダーの有効/無効切り替え
+  - [x] リマインダー削除機能
 
 ## フェーズ3: 通知スケジューリング
 
-- [ ] 通知スケジューリング機能の実装
-  - [ ] scheduleNotificationメソッドの実装
-  - [ ] 時刻計算ロジックの実装
-  - [ ] タイマー管理機能
+- [x] 通知スケジューリング機能の実装
+  - [x] scheduleNotificationメソッドの実装
+  - [x] 時刻計算ロジックの実装
+  - [x] タイマー管理機能
 
-- [ ] 事前通知の実装
-  - [ ] 事前通知時間の計算
-  - [ ] 複数の事前通知の管理
-  - [ ] 通知内容のカスタマイズ
+- [x] 事前通知の実装
+  - [x] 事前通知時間の計算
+  - [x] 複数の事前通知の管理
+  - [x] 通知内容のカスタマイズ
 
-- [ ] 繰り返し通知の実装
-  - [ ] 日次繰り返しロジック
-  - [ ] 週次繰り返しロジック
-  - [ ] 月次繰り返しロジック
+- [x] 繰り返し通知の実装
+  - [x] 日次繰り返しロジック
+  - [x] 週次繰り返しロジック
+  - [x] 月次繰り返しロジック
 
 ## フェーズ4: 通知ハンドリング
 
-- [ ] NotificationHandlerの実装
-  - [ ] src/utils/NotificationHandler.tsを作成
-  - [ ] 通知クリックイベントの処理
-  - [ ] ウィンドウフォーカス処理
+- [x] NotificationHandlerの実装
+  - [x] src/utils/NotificationHandler.tsを作成
+  - [x] 通知クリックイベントの処理
+  - [x] ウィンドウフォーカス処理
 
-- [ ] アクションボタンの処理
-  - [ ] タスク完了アクションの実装
-  - [ ] スヌーズアクションの実装
-  - [ ] Reduxストアとの連携
+- [x] アクションボタンの処理
+  - [x] タスク完了アクションの実装
+  - [x] スヌーズアクションの実装
+  - [x] Reduxストアとの連携
 
-- [ ] スヌーズ機能の実装
-  - [ ] スヌーズ時間の選択肢（5分、10分、30分）
-  - [ ] 再スケジューリングロジック
-  - [ ] スヌーズ履歴の管理
+- [x] スヌーズ機能の実装
+  - [x] スヌーズ時間の選択肢（5分、10分、30分）
+  - [x] 再スケジューリングロジック
+  - [x] スヌーズ履歴の管理
 
 ## フェーズ5: 統合とテスト
 
-- [ ] 既存画面への統合
-  - [ ] ReminderScreen.tsxへReminderSettings追加
+- [x] 既存画面への統合
+  - [x] ReminderScreen.tsxへReminderSettings追加
   - [ ] タスク編集画面へのリマインダー設定追加
   - [ ] タスクリストでのリマインダーインジケーター表示
 
-- [ ] Service Worker設定（PWA対応）
-  - [ ] public/sw.jsを作成
-  - [ ] 通知イベントリスナーの実装
-  - [ ] index.htmlへのService Worker登録
+- [x] Service Worker設定（PWA対応）
+  - [x] public/sw.jsを作成
+  - [x] 通知イベントリスナーの実装
+  - [x] index.htmlへのService Worker登録
 
 - [ ] テストの実装
   - [ ] NotificationServiceのユニットテスト作成
