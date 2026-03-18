@@ -415,4 +415,5 @@ export class NotificationService {
   }
 }
 
+// Export default instance
 export default NotificationService.getInstance();

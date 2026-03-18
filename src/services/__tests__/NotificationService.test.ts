@@ -3,29 +3,38 @@
  * NotificationService Unit Tests
  */
 
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { NotificationService } from '../NotificationService';
 
 // Mock Notification API
-global.Notification = jest.fn() as any;
+const mockRequestPermission = vi.fn();
+const mockNotificationConstructor = vi.fn();
+
+global.Notification = mockNotificationConstructor as any;
 (global.Notification as any).permission = 'default';
-(global.Notification as any).requestPermission = jest.fn();
+(global.Notification as any).requestPermission = mockRequestPermission;
 
 describe('NotificationService', () => {
   let service: NotificationService;
 
   beforeEach(() => {
     // Clear all mocks
-    jest.clearAllMocks();
-    jest.clearAllTimers();
-    jest.useFakeTimers();
+    vi.clearAllMocks();
+    vi.clearAllTimers();
+    vi.useFakeTimers();
 
     // Reset singleton instance for testing
     (NotificationService as any).instance = undefined;
     service = NotificationService.getInstance();
+
+    // Reset mock defaults
+    (global.Notification as any).permission = 'default';
+    mockRequestPermission.mockReset();
+    mockNotificationConstructor.mockReset();
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   describe('getInstance', () => {
@@ -60,20 +69,16 @@ describe('NotificationService', () => {
 
   describe('requestPermission', () => {
     it('should request permission and return true when granted', async () => {
-      (global.Notification as any).requestPermission.mockResolvedValue(
-        'granted'
-      );
+      mockRequestPermission.mockResolvedValue('granted');
 
       const result = await service.requestPermission();
 
-      expect(global.Notification.requestPermission).toHaveBeenCalled();
+      expect(mockRequestPermission).toHaveBeenCalled();
       expect(result).toBe(true);
     });
 
     it('should return false when permission denied', async () => {
-      (global.Notification as any).requestPermission.mockResolvedValue(
-        'denied'
-      );
+      mockRequestPermission.mockResolvedValue('denied');
 
       const result = await service.requestPermission();
 
@@ -92,10 +97,10 @@ describe('NotificationService', () => {
     });
 
     it('should handle errors gracefully', async () => {
-      (global.Notification as any).requestPermission.mockRejectedValue(
-        new Error('Permission error')
-      );
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+      mockRequestPermission.mockRejectedValue(new Error('Permission error'));
+      const consoleSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
 
       const result = await service.requestPermission();
 
@@ -113,13 +118,13 @@ describe('NotificationService', () => {
     it('should create notification when permission granted', async () => {
       (global.Notification as any).permission = 'granted';
       const mockNotification = {};
-      (global.Notification as any).mockReturnValue(mockNotification);
+      mockNotificationConstructor.mockReturnValue(mockNotification);
 
       const result = await service.showNotification('Test Title', {
         body: 'Test body',
       });
 
-      expect(global.Notification).toHaveBeenCalledWith('Test Title', {
+      expect(mockNotificationConstructor).toHaveBeenCalledWith('Test Title', {
         body: 'Test body',
         icon: '/favicon.ico',
         badge: '/favicon.ico',
@@ -129,11 +134,11 @@ describe('NotificationService', () => {
 
     it('should return null when permission not granted', async () => {
       (global.Notification as any).permission = 'denied';
-      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
       const result = await service.showNotification('Test Title');
 
-      expect(global.Notification).not.toHaveBeenCalled();
+      expect(mockNotificationConstructor).not.toHaveBeenCalled();
       expect(result).toBeNull();
       expect(consoleSpy).toHaveBeenCalledWith('通知権限がありません');
 
@@ -142,10 +147,12 @@ describe('NotificationService', () => {
 
     it('should handle notification creation errors', async () => {
       (global.Notification as any).permission = 'granted';
-      (global.Notification as any).mockImplementation(() => {
+      mockNotificationConstructor.mockImplementation(() => {
         throw new Error('Notification error');
       });
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+      const consoleSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
 
       const result = await service.showNotification('Test Title');
 
@@ -160,8 +167,8 @@ describe('NotificationService', () => {
   });
 
   describe('scheduleNotification', () => {
-    it('should schedule notification with delay', () => {
-      const showNotificationSpy = jest
+    it('should schedule notification with delay', async () => {
+      const showNotificationSpy = vi
         .spyOn(service, 'showNotification')
         .mockResolvedValue(null);
 
@@ -170,13 +177,13 @@ describe('NotificationService', () => {
       expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 5000);
 
       // Fast-forward time
-      jest.advanceTimersByTime(5000);
+      await vi.runAllTimersAsync();
 
       expect(showNotificationSpy).toHaveBeenCalledWith('Test Title', {});
     });
 
     it('should cancel existing notification before scheduling new one', () => {
-      const cancelSpy = jest.spyOn(service, 'cancelScheduledNotification');
+      const cancelSpy = vi.spyOn(service, 'cancelScheduledNotification');
 
       service.scheduleNotification('test-id', 'Test 1', {}, 3000);
       service.scheduleNotification('test-id', 'Test 2', {}, 5000);
@@ -187,15 +194,12 @@ describe('NotificationService', () => {
 
     it('should call onShow callback when notification is shown', async () => {
       const mockNotification = {} as Notification;
-      const onShow = jest.fn();
-      jest
-        .spyOn(service, 'showNotification')
-        .mockResolvedValue(mockNotification);
+      const onShow = vi.fn();
+      vi.spyOn(service, 'showNotification').mockResolvedValue(mockNotification);
 
       service.scheduleNotification('test-id', 'Test', {}, 1000, onShow);
 
-      jest.advanceTimersByTime(1000);
-      await Promise.resolve(); // Wait for async operations
+      await vi.runAllTimersAsync();
 
       expect(onShow).toHaveBeenCalledWith(mockNotification);
     });
@@ -204,7 +208,7 @@ describe('NotificationService', () => {
   describe('scheduleNotificationAtTime', () => {
     it('should schedule notification for future time', () => {
       const futureTime = new Date(Date.now() + 10000);
-      const scheduleSpy = jest.spyOn(service, 'scheduleNotification');
+      const scheduleSpy = vi.spyOn(service, 'scheduleNotification');
 
       const result = service.scheduleNotificationAtTime(
         'test-id',
@@ -225,7 +229,7 @@ describe('NotificationService', () => {
 
     it('should return false for past time', () => {
       const pastTime = new Date(Date.now() - 10000);
-      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
       const result = service.scheduleNotificationAtTime(
         'test-id',
@@ -245,7 +249,7 @@ describe('NotificationService', () => {
     it('should handle very long delays by re-scheduling', () => {
       const MAX_DELAY = 2147483647;
       const veryFutureTime = new Date(Date.now() + MAX_DELAY + 10000);
-      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
       const result = service.scheduleNotificationAtTime(
         'test-id',
@@ -269,7 +273,7 @@ describe('NotificationService', () => {
 
   describe('cancelScheduledNotification', () => {
     it('should cancel scheduled notification', () => {
-      const clearTimeoutSpy = jest.spyOn(global, 'clearTimeout');
+      const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout');
 
       service.scheduleNotification('test-id', 'Test', {}, 5000);
       service.cancelScheduledNotification('test-id');
@@ -278,7 +282,7 @@ describe('NotificationService', () => {
     });
 
     it('should do nothing if notification does not exist', () => {
-      const clearTimeoutSpy = jest.spyOn(global, 'clearTimeout');
+      const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout');
 
       service.cancelScheduledNotification('non-existent');
 
@@ -288,7 +292,7 @@ describe('NotificationService', () => {
 
   describe('scheduleRepeatingNotification', () => {
     it('should schedule repeating notifications', async () => {
-      const showSpy = jest
+      const showSpy = vi
         .spyOn(service, 'showNotification')
         .mockResolvedValue(null);
 
@@ -305,16 +309,16 @@ describe('NotificationService', () => {
       expect(showSpy).toHaveBeenCalledTimes(1);
 
       // Advance time for subsequent notifications
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
       await Promise.resolve();
       expect(showSpy).toHaveBeenCalledTimes(2);
 
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
       await Promise.resolve();
       expect(showSpy).toHaveBeenCalledTimes(3);
 
       // Should stop after maxCount
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
       await Promise.resolve();
       expect(showSpy).toHaveBeenCalledTimes(3);
 
@@ -322,7 +326,7 @@ describe('NotificationService', () => {
     });
 
     it('should return stop function', () => {
-      const cancelSpy = jest.spyOn(service, 'cancelScheduledNotification');
+      const cancelSpy = vi.spyOn(service, 'cancelScheduledNotification');
 
       const stopFn = service.scheduleRepeatingNotification(
         'test-id',
@@ -365,7 +369,7 @@ describe('NotificationService', () => {
 
   describe('cancelAllScheduledNotifications', () => {
     it('should cancel all scheduled notifications', () => {
-      const clearTimeoutSpy = jest.spyOn(global, 'clearTimeout');
+      const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout');
 
       service.scheduleNotification('test-1', 'Test 1', {}, 1000);
       service.scheduleNotification('test-2', 'Test 2', {}, 2000);

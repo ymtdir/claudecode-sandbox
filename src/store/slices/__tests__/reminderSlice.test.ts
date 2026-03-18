@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-require-imports */
 /**
  * reminderSlice Unit Tests
  */
 
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { configureStore } from '@reduxjs/toolkit';
+import { v4 as uuidv4 } from 'uuid';
 import reminderReducer, {
   addReminder,
   updateReminder,
@@ -34,8 +35,8 @@ import type {
 } from '../../../types/reminder';
 
 // Mock UUID
-jest.mock('uuid', () => ({
-  v4: () => 'test-uuid-123',
+vi.mock('uuid', () => ({
+  v4: vi.fn(() => 'test-uuid-123'),
 }));
 
 describe('reminderSlice', () => {
@@ -139,7 +140,7 @@ describe('reminderSlice', () => {
         store.dispatch(addReminder({ taskId: 'task-1', type: 'time' }));
 
         // Mock UUID to return different value
-        (require('uuid').v4 as jest.Mock).mockReturnValue('test-uuid-456');
+        vi.mocked(uuidv4).mockReturnValue('test-uuid-456');
         store.dispatch(addReminder({ taskId: 'task-2', type: 'time' }));
 
         // Delete first reminder
@@ -155,9 +156,9 @@ describe('reminderSlice', () => {
       it('should delete all reminders for a task', () => {
         // Add reminders for different tasks
         store.dispatch(addReminder({ taskId: 'task-1', type: 'time' }));
-        (require('uuid').v4 as jest.Mock).mockReturnValue('test-uuid-456');
+        vi.mocked(uuidv4).mockReturnValue('test-uuid-456');
         store.dispatch(addReminder({ taskId: 'task-1', type: 'repeat' }));
-        (require('uuid').v4 as jest.Mock).mockReturnValue('test-uuid-789');
+        vi.mocked(uuidv4).mockReturnValue('test-uuid-789');
         store.dispatch(addReminder({ taskId: 'task-2', type: 'time' }));
 
         // Delete reminders for task-1
@@ -339,7 +340,7 @@ describe('reminderSlice', () => {
         })
       );
 
-      (require('uuid').v4 as jest.Mock).mockReturnValue('test-uuid-456');
+      vi.mocked(uuidv4).mockReturnValue('test-uuid-456');
       store.dispatch(
         addReminder({
           taskId: 'task-2',
@@ -348,7 +349,7 @@ describe('reminderSlice', () => {
       );
       store.dispatch(toggleReminder('test-uuid-456')); // Make inactive
 
-      (require('uuid').v4 as jest.Mock).mockReturnValue('test-uuid-789');
+      vi.mocked(uuidv4).mockReturnValue('test-uuid-789');
       store.dispatch(
         addReminder({
           taskId: 'task-1',

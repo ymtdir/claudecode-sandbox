@@ -47,8 +47,10 @@ const reminderSlice = createSlice({
         id: uuidv4(),
         ...action.payload,
         isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        createdAt: new Date().toISOString() as any,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        updatedAt: new Date().toISOString() as any,
       };
       state.reminders.push(newReminder);
     },
@@ -62,7 +64,8 @@ const reminderSlice = createSlice({
         state.reminders[index] = {
           ...state.reminders[index],
           ...action.payload,
-          updatedAt: new Date(),
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          updatedAt: new Date().toISOString() as any,
         };
       }
     },
@@ -84,7 +87,8 @@ const reminderSlice = createSlice({
       const reminder = state.reminders.find((r) => r.id === action.payload);
       if (reminder) {
         reminder.isActive = !reminder.isActive;
-        reminder.updatedAt = new Date();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        reminder.updatedAt = new Date().toISOString() as any;
       }
     },
 
