@@ -40,6 +40,7 @@ git diff --name-only origin/main...HEAD
 ### ステップ2: Issue番号の特定
 
 ブランチ名から自動判定:
+
 - `issue-123-fix-bug` → Issue #123
 - `feature/user-auth` → コミットメッセージから検索
 - その他 → 最近のコミットメッセージから`#\d+`を検索
@@ -54,6 +55,7 @@ Issueがない場合のみ、コミットプレフィックスから判定しま
 ### ステップ4: テンプレートの適用
 
 判定された種類に応じてテンプレートを選択:
+
 - **bug** → `./assets/templates/bug.md`
 - **enhancement** → `./assets/templates/enhancement.md`
 - **documentation** → シンプルなドキュメント更新形式
@@ -65,17 +67,18 @@ Issueがない場合のみ、コミットプレフィックスから判定しま
 
 ```javascript
 mcp__github__create_pull_request({
-  "owner": "[owner]",
-  "repo": "[repo]",
-  "title": "[PRタイトル]",
-  "body": "[テンプレートで生成した本文]",
-  "head": "[現在のブランチ]",
-  "base": "main",
-  "draft": false
-})
+  owner: '[owner]',
+  repo: '[repo]',
+  title: '[PRタイトル]',
+  body: '[テンプレートで生成した本文]',
+  head: '[現在のブランチ]',
+  base: 'main',
+  draft: false,
+});
 ```
 
 PR作成後、PR番号を取得：
+
 ```bash
 # PR番号を取得（作成したPRの番号を取得）
 PR_NUMBER=$(gh pr view --json number -q ".number")
@@ -93,15 +96,18 @@ REPO=$(gh repo view --json name -q ".name")
 PR作成成功後、適切なラベルを自動付与します。
 
 **ラベル付与の流れ**:
+
 1. 関連Issueがある場合 → **Issueのラベルを継承**（最優先）
 2. 関連Issueがない場合 → コミットプレフィックスから判定
 3. GitHub APIを使用してラベルを付与
 
 **実装のポイント**:
+
 - ラベルが存在しない場合は警告を表示（自動作成はしない）
 - `chore:`や`test:`より`feat:`や`fix:`を優先（本質的な変更を重視）
 
 **ラベル付与コマンド**:
+
 ```bash
 # 方法1: JSONをパイプで渡す（最も確実）
 echo '{"labels":["enhancement","ui"]}' | \
@@ -125,31 +131,32 @@ PR作成後、即座にレビューを実行してGitHubに投稿：
 ```javascript
 // 1. pr-reviewerサブエージェントを起動
 Task({
-  "subagent_type": "pr-reviewer",
-  "description": "Review PR #[PR番号]",
-  "prompt": `Pull Request #[PR番号]のレビューを実行してください。
+  subagent_type: 'pr-reviewer',
+  description: 'Review PR #[PR番号]',
+  prompt: `Pull Request #[PR番号]のレビューを実行してください。
 
   特に以下を確認:
   - コードの品質と一貫性
   - ドキュメントの整合性
   - テストの実施状況
-  - 関連Issueとの整合性`
-})
+  - 関連Issueとの整合性`,
+});
 
 // 2. サブエージェントのレビュー結果を受け取ったら、GitHubに投稿
 mcp__github__pull_request_review_write({
-  "method": "create",
-  "owner": "[owner]",
-  "repo": "[repo]",
-  "pullNumber": [PR番号],
-  "body": "[レビュー結果のサマリー]",
-  "event": "COMMENT"  // 自分のPRにはCOMMENTのみ可能
-})
+  method: 'create',
+  owner: '[owner]',
+  repo: '[repo]',
+  pullNumber: [PR番号],
+  body: '[レビュー結果のサマリー]',
+  event: 'COMMENT', // 自分のPRにはCOMMENTのみ可能
+});
 
 // 注意: 自分が作成したPRには"APPROVE"できないため、"COMMENT"を使用
 ```
 
 **レビュー投稿の内容**：
+
 - チェックリスト形式での確認項目
 - 良い点と改善点の指摘
 - 関連ドキュメントとの整合性確認
@@ -158,6 +165,7 @@ mcp__github__pull_request_review_write({
 ## PRタイトルの生成
 
 ### パターン1: Issue連携あり
+
 ```
 fix: [Issue概要] (#123)
 feat: [Issue概要] (#456)
@@ -167,6 +175,7 @@ docs: [Issue概要] (#345)
 ```
 
 ### パターン2: Issue連携なし
+
 ```
 fix: [最初のコミットメッセージから抽出]
 feat: [主要な変更内容を要約]
@@ -181,23 +190,29 @@ docs: [ドキュメント更新内容を明記]
 
 ```markdown
 ## 概要
+
 [変更内容の要約]
 
 ## 関連Issue
+
 Closes #[Issue番号]（あれば）
 
 ## 変更内容
+
 [主要な変更点を箇条書き]
 
 ## テスト
+
 - [ ] ユニットテスト: [結果]
 - [ ] 統合テスト: [結果]
 - [ ] 手動テスト: [実施内容]
 
 ## スクリーンショット
+
 [UIの変更があれば]
 
 ## レビューポイント
+
 [特に確認してほしい箇所]
 ```
 
@@ -207,26 +222,33 @@ PRに含まれるコミットを分析して整理:
 
 ```markdown
 ## コミット履歴
+
 ### 機能追加 (feat)
+
 - ログイン機能を追加 (abc123)
 - バリデーション処理を実装 (def456)
 
 ### バグ修正 (fix)
+
 - セッション保存エラーを修正 (ghi789)
 
 ### テスト (test)
+
 - ログインのE2Eテストを追加 (jkl012)
 ```
 
 ## 自動チェック
 
 PR作成前の確認:
+
 1. **未コミットの変更がないか**
+
    ```bash
    git status --short
    ```
 
 2. **リモートとの同期**
+
    ```bash
    git fetch origin
    git status -sb
@@ -241,18 +263,21 @@ PR作成前の確認:
 ## エラーハンドリング
 
 ### ブランチがmainの場合
+
 ```
 ❌ mainブランチから直接PRは作成できません
 新しいブランチを作成してください
 ```
 
 ### 変更がない場合
+
 ```
 ⚠️ ベースブランチとの差分がありません
 変更をコミットしてから実行してください
 ```
 
 ### コンフリクトがある場合
+
 ```
 ⚠️ マージコンフリクトが検出されました
 以下のファイルで競合しています:
@@ -260,4 +285,3 @@ PR作成前の確認:
 
 解決してから再度実行してください
 ```
-

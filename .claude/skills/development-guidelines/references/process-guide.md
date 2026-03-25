@@ -7,11 +7,13 @@
 抽象的なルールだけでなく、具体的なコード例を提示します。
 
 **悪い例**:
+
 ```
 変数名は分かりやすくすること
 ```
 
 **良い例**:
+
 ```typescript
 // ✅ 良い例: 役割が明確
 const userAuthentication = new UserAuthenticationService();
@@ -27,6 +29,7 @@ const repo = new Repository();
 「なぜそうするのか」を明確にします。
 
 **例**:
+
 ```
 ## エラーを無視しない
 
@@ -40,11 +43,13 @@ const repo = new Repository();
 曖昧な表現を避け、具体的な数値を示します。
 
 **悪い例**:
+
 ```
 コードカバレッジは高く保つこと
 ```
 
 **良い例**:
+
 ```
 コードカバレッジ目標:
 - ユニットテスト: 80%以上
@@ -60,6 +65,7 @@ const repo = new Repository();
 Vincent Driessenが提唱した、機能開発・リリース・ホットフィックスを体系的に管理するブランチモデル。明確な役割分担により、チーム開発での並行作業と安定したリリースを実現します。
 
 **ブランチ構成**:
+
 ```
 main (本番環境)
 └── develop (開発・統合環境)
@@ -69,6 +75,7 @@ main (本番環境)
 ```
 
 **運用ルール**:
+
 - **main**: 本番リリース済みの安定版コードのみを保持。タグでバージョン管理
 - **develop**: 次期リリースに向けた最新の開発コードを統合。CIでの自動テスト実施
 - **feature/\*、fix/\***: developから分岐し、作業完了後にPRでdevelopへマージ
@@ -76,6 +83,7 @@ main (本番環境)
 - **マージ方針**: feature→develop は squash merge、develop→main は merge commit を推奨
 
 **Git Flowのメリット**:
+
 - ブランチの役割が明確で、複数人での並行開発がしやすい
 - 本番環境(main)が常にクリーンな状態に保たれる
 - 緊急対応時はhotfixブランチで迅速に対応可能（必要に応じて導入）
@@ -93,6 +101,7 @@ main (本番環境)
 ```
 
 **Type一覧**:
+
 ```
 feat: 新機能 (minor version up)
 fix: バグ修正 (patch version up)
@@ -133,6 +142,7 @@ BREAKING CHANGE: Task型にpriority必須フィールド追加
 
 ```markdown
 ## 変更の種類
+
 - [ ] 新機能 (feat)
 - [ ] バグ修正 (fix)
 - [ ] リファクタリング (refactor)
@@ -140,30 +150,39 @@ BREAKING CHANGE: Task型にpriority必須フィールド追加
 - [ ] その他 (chore)
 
 ## 変更内容
+
 ### 何を変更したか
+
 [簡潔な説明]
 
 ### なぜ変更したか
+
 [背景・理由]
 
 ### どのように変更したか
+
 - [変更点1]
 - [変更点2]
 
 ## テスト
+
 ### 実施したテスト
+
 - [ ] ユニットテスト追加
 - [ ] 統合テスト追加
 - [ ] 手動テスト実施
 
 ### テスト結果
+
 [テスト結果の説明]
 
 ## 関連Issue
+
 Closes #[番号]
 Refs #[番号]
 
 ## レビューポイント
+
 [レビュアーに特に見てほしい点]
 ```
 
@@ -182,6 +201,7 @@ Refs #[番号]
 ```
 
 **目標比率**:
+
 - ユニットテスト: 70%
 - 統合テスト: 20%
 - E2Eテスト: 10%
@@ -212,9 +232,9 @@ describe('TaskService', () => {
       const invalidData = { title: '' };
 
       // When/Then: 実行と検証
-      await expect(
-        service.create(invalidData)
-      ).rejects.toThrow(ValidationError);
+      await expect(service.create(invalidData)).rejects.toThrow(
+        ValidationError
+      );
     });
   });
 });
@@ -245,6 +265,7 @@ describe('TaskService', () => {
 ```
 
 **理由**:
+
 - 重要なビジネスロジック(services/)は高いカバレッジを要求
 - UI層は低めでも許容
 - 100%を目指さない (コストと効果のバランス)
@@ -262,19 +283,24 @@ describe('TaskService', () => {
 **レビュアー向け**:
 
 1. **建設的なフィードバック**
-```markdown
+
+````markdown
 ## ❌ 悪い例
+
 このコードはダメです。
 
 ## ✅ 良い例
+
 この実装だと O(n²) の時間計算量になります。
 Map を使うと O(n) に改善できます:
 
 ```typescript
-const taskMap = new Map(tasks.map(t => [t.id, t]));
-const result = ids.map(id => taskMap.get(id));
+const taskMap = new Map(tasks.map((t) => [t.id, t]));
+const result = ids.map((id) => taskMap.get(id));
 ```
-```
+````
+
+````
 
 2. **優先度の明示**
 ```markdown
@@ -282,9 +308,10 @@ const result = ids.map(id => taskMap.get(id));
 [推奨] パフォーマンス: ループ内でのDB呼び出しを避けましょう
 [提案] 可読性: この関数名をもっと明確にできませんか？
 [質問] この処理の意図を教えてください
-```
+````
 
 3. **ポジティブなフィードバックも**
+
 ```markdown
 ✨ この実装は分かりやすいですね！
 👍 エッジケースがしっかり考慮されています
@@ -355,6 +382,7 @@ const result = ids.map(id => taskMap.get(id));
 **実装方法**:
 
 **1. CI/CD (GitHub Actions)**
+
 ```yaml
 # .github/workflows/ci.yml
 name: CI
@@ -375,6 +403,7 @@ jobs:
 ```
 
 **2. Pre-commit フック (Husky 9.x + lint-staged)**
+
 ```json
 // package.json
 {
@@ -387,13 +416,11 @@ jobs:
     "build": "tsc"
   },
   "lint-staged": {
-    "*.{ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ]
+    "*.{ts,tsx}": ["eslint --fix", "prettier --write"]
   }
 }
 ```
+
 ```bash
 # .husky/pre-commit
 npm run lint-staged
@@ -401,11 +428,13 @@ npm run typecheck
 ```
 
 **導入効果**:
+
 - コミット前に自動チェックが走り、不具合コードの混入を防止
 - PR作成時に自動でCI実行され、マージ前に品質を担保
 - 早期発見により、修正コストを最大80%削減（バグ検出が本番後の場合と比較）
 
 **この構成を選んだ理由**:
+
 - 2025年時点でのTypeScriptエコシステムにおける標準的かつモダンな構成
 - ツール間の互換性が高く、設定の衝突が少ない
 - 開発体験と実行速度のバランスが優れている

@@ -85,16 +85,10 @@
     "autoAllowBashIfSandboxed": true,
     "allowUnsandboxedCommands": false,
     "network": {
-      "allowedDomains": [
-        "github.com",
-        "*.npmjs.org"
-      ],
+      "allowedDomains": ["github.com", "*.npmjs.org"],
       "allowLocalBinding": true
     },
-    "excludedCommands": [
-      "git",
-      "docker"
-    ]
+    "excludedCommands": ["git", "docker"]
   },
   "skills": {
     "allowed": [

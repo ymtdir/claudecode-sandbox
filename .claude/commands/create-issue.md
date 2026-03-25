@@ -34,6 +34,7 @@ claude
 ### ステップ3: 結果の報告
 
 作成されたIssueのURLと番号を表示:
+
 ```
 ✅ Issueを作成しました！
 
@@ -50,6 +51,7 @@ URL: https://github.com/owner/repo/issues/123
 - Issue URLが表示されていること
 
 完了時のメッセージ:
+
 ```
 「Issue #[番号]を作成しました。
 

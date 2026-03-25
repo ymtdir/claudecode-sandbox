@@ -14,6 +14,7 @@ claude
 ```
 
 ## 前提条件
+
 - `/setup-project`が完了していること
 - 以下のドキュメントが存在すること：
   - docs/product-requirements.md
@@ -38,16 +39,19 @@ claude
 プロジェクトタイプに応じた標準Issueセットを設計：
 
 **共通Issue**:
+
 - 開発環境セットアップ
 - 基本プロジェクト構造
 - データモデル実装
 
 **プロジェクト固有Issue**:
+
 - モバイル: オフライン対応、プッシュ通知
 - Web: レスポンシブ対応、SEO
 - CLI: コマンド実装、設定管理
 
 各Issueについて以下を決定：
+
 - タイトルと本文
 - 種類（bug/enhancement/refactor/documentation）
 - 依存関係（前のステップへの依存を明記）
@@ -57,6 +61,7 @@ claude
 **issue-trackingスキル**をロードし、計画した各Issueを順番に作成します。
 
 各Issueの作成フロー（issue-trackingスキルに委譲）：
+
 1. 種類に応じたラベル判定（label-definitions.md準拠）
 2. テンプレート適用
 3. 依存関係を本文に記述（例: `前提: #15`）

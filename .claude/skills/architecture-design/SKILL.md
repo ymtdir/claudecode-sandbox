@@ -37,6 +37,7 @@ docs/architecture.md
 ## テンプレートの参照
 
 アーキテクチャ設計書を作成する際は、次のガイドを参照しながら、テンプレートを使用してください:
+
 - ガイド: ./references/guide.md
 - テンプレート: ./assets/template.md
 

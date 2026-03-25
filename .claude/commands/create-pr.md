@@ -35,6 +35,7 @@ claude
 ### ステップ3: 結果の報告
 
 PR作成後の情報を表示:
+
 ```
 ✅ Pull Requestを作成しました！
 
@@ -55,6 +56,7 @@ URL: https://github.com/[owner]/[repo]/pull/[番号]
 - 自動レビューがGitHubに投稿される
 
 完了時のメッセージ:
+
 ```
 「PR #[番号]を作成しました。
 
