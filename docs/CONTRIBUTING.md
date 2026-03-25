@@ -189,6 +189,7 @@ Conventional Commits 仕様に従います:
 ```
 
 **Type（必須）**:
+
 - `feat`: 新機能
 - `fix`: バグ修正
 - `docs`: ドキュメントのみの変更
@@ -236,7 +237,6 @@ git push origin feature/my-feature
    ```
 
 2. **Pull Request を作成**
-
    - GitHub の Pull Request ページで "New Pull Request" をクリック
    - ベースブランチ: `main`
    - 比較ブランチ: `feature/my-feature`
@@ -244,7 +244,6 @@ git push origin feature/my-feature
 3. **PRテンプレートに記入**
 
    以下の情報を含めてください:
-
    - **変更内容の概要**: 何を変更したか
    - **変更理由**: なぜこの変更が必要か
    - **テスト方法**: どのようにテストしたか

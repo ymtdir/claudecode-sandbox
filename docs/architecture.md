@@ -3,15 +3,18 @@
 ## 1. 概要
 
 ### 1.1 ドキュメント情報
+
 - **プロダクト名**: UnifiedCal
 - **バージョン**: 1.0.0
 - **作成日**: 2026-03-04
 - **技術スタック**: React Native + TypeScript
 
 ### 1.2 目的
+
 本ドキュメントは、UnifiedCalのシステムアーキテクチャ、技術スタック、データフロー、インフラストラクチャを定義し、開発チームが一貫した設計思想に基づいて実装を進めるためのガイドラインを提供する。
 
 ### 1.3 アーキテクチャ原則
+
 - **クロスプラットフォーム優先**: iOS/Android で共通のコードベースを最大化
 - **オフラインファースト**: ローカルデータを優先し、同期は非同期で実行
 - **モジュラー設計**: 機能単位でのモジュール分割による保守性向上
@@ -57,6 +60,7 @@
 ### 2.2 技術スタック詳細
 
 #### フロントエンド（モバイルアプリ）
+
 ```javascript
 {
   "core": {
@@ -91,6 +95,7 @@
 ```
 
 #### バックエンド（BaaS）
+
 ```javascript
 {
   "platform": "Firebase / Supabase",
@@ -187,14 +192,22 @@ const tasksSlice = createSlice({
   name: 'tasks',
   initialState,
   reducers: {
-    addTask: (state, action) => { /* ... */ },
-    updateTask: (state, action) => { /* ... */ },
-    deleteTask: (state, action) => { /* ... */ },
-    completeTask: (state, action) => { /* ... */ },
+    addTask: (state, action) => {
+      /* ... */
+    },
+    updateTask: (state, action) => {
+      /* ... */
+    },
+    deleteTask: (state, action) => {
+      /* ... */
+    },
+    completeTask: (state, action) => {
+      /* ... */
+    },
   },
   extraReducers: (builder) => {
     // Handle async actions
-  }
+  },
 });
 ```
 
@@ -224,6 +237,7 @@ graph LR
 ### 4.2 データ同期戦略
 
 #### オフラインファースト設計
+
 ```typescript
 class SyncManager {
   // 1. ローカル変更を即座に反映
@@ -375,14 +389,14 @@ class SecureStorage {
 
 ### 5.3 セキュリティポリシー
 
-| 項目 | 実装方法 |
-|------|----------|
-| 認証 | Firebase Auth / Supabase Auth with MFA |
-| 通信 | HTTPS/TLS 1.3, Certificate Pinning |
-| ローカルストレージ | iOS Keychain / Android Keystore |
-| データ暗号化 | AES-256-GCM |
-| セッション管理 | JWT with refresh token rotation |
-| APIアクセス制御 | Rate limiting, API keys |
+| 項目               | 実装方法                               |
+| ------------------ | -------------------------------------- |
+| 認証               | Firebase Auth / Supabase Auth with MFA |
+| 通信               | HTTPS/TLS 1.3, Certificate Pinning     |
+| ローカルストレージ | iOS Keychain / Android Keystore        |
+| データ暗号化       | AES-256-GCM                            |
+| セッション管理     | JWT with refresh token rotation        |
+| APIアクセス制御    | Rate limiting, API keys                |
 
 ---
 
@@ -391,18 +405,18 @@ class SecureStorage {
 ### 6.1 最適化戦略
 
 #### コード分割とLazy Loading
+
 ```typescript
 // Screen-level code splitting
 const CalendarScreen = lazy(() => import('./screens/Calendar'));
 const StatisticsScreen = lazy(() => import('./screens/Statistics'));
 
 // Component-level lazy loading
-const HeavyComponent = lazy(() =>
-  import('./components/HeavyComponent')
-);
+const HeavyComponent = lazy(() => import('./components/HeavyComponent'));
 ```
 
 #### リスト最適化
+
 ```typescript
 // Virtualized List for large datasets
 import { FlashList } from '@shopify/flash-list';
@@ -422,31 +436,36 @@ const TaskList = ({ tasks }) => (
 ```
 
 #### メモ化とキャッシング
+
 ```typescript
 // Component memoization
-const TaskItem = memo(({ task, onComplete }) => {
-  // Component implementation
-}, (prevProps, nextProps) => {
-  return prevProps.task.id === nextProps.task.id &&
-         prevProps.task.status === nextProps.task.status;
-});
+const TaskItem = memo(
+  ({ task, onComplete }) => {
+    // Component implementation
+  },
+  (prevProps, nextProps) => {
+    return (
+      prevProps.task.id === nextProps.task.id &&
+      prevProps.task.status === nextProps.task.status
+    );
+  }
+);
 
 // Selector memoization
-const selectCompletedTasks = createSelector(
-  [selectAllTasks],
-  (tasks) => tasks.filter(task => task.status === 'completed')
+const selectCompletedTasks = createSelector([selectAllTasks], (tasks) =>
+  tasks.filter((task) => task.status === 'completed')
 );
 ```
 
 ### 6.2 パフォーマンス指標
 
-| 指標 | 目標値 | 測定方法 |
-|------|--------|----------|
-| アプリ起動時間 | < 3秒 | Performance API |
-| 画面遷移 | < 500ms | Navigation timing |
-| リスト表示(100件) | < 1秒 | Custom metrics |
-| メモリ使用量 | < 300MB | Memory profiler |
-| バッテリー消費 | < 7%/時間 | OS metrics |
+| 指標              | 目標値    | 測定方法          |
+| ----------------- | --------- | ----------------- |
+| アプリ起動時間    | < 3秒     | Performance API   |
+| 画面遷移          | < 500ms   | Navigation timing |
+| リスト表示(100件) | < 1秒     | Custom metrics    |
+| メモリ使用量      | < 300MB   | Memory profiler   |
+| バッテリー消費    | < 7%/時間 | OS metrics        |
 
 ---
 
@@ -495,11 +514,11 @@ jobs:
 
 ### 7.2 環境構成
 
-| 環境 | 用途 | インフラ |
-|------|------|----------|
-| Development | 開発・テスト | Local + Firebase Emulator |
-| Staging | 受入テスト | Firebase (Staging Project) |
-| Production | 本番環境 | Firebase (Production Project) |
+| 環境        | 用途         | インフラ                      |
+| ----------- | ------------ | ----------------------------- |
+| Development | 開発・テスト | Local + Firebase Emulator     |
+| Staging     | 受入テスト   | Firebase (Staging Project)    |
+| Production  | 本番環境     | Firebase (Production Project) |
 
 ### 7.3 モニタリング
 
@@ -566,7 +585,7 @@ class PluginManager {
 
   executeHook<T>(hookName: string, data: T): T {
     let result = data;
-    this.plugins.forEach(plugin => {
+    this.plugins.forEach((plugin) => {
       if (plugin.hooks[hookName]) {
         result = plugin.hooks[hookName](result);
       }
@@ -665,11 +684,11 @@ class ErrorRecovery {
 
 ### 10.1 リファクタリング計画
 
-| 優先度 | 項目 | 理由 | 予定時期 |
-|--------|------|------|----------|
-| 高 | 状態管理の最適化 | Redux boilerplateの削減 | v1.1 |
-| 中 | コンポーネント分割 | 再利用性の向上 | v1.2 |
-| 低 | テストカバレッジ向上 | 80%以上を目指す | v1.3 |
+| 優先度 | 項目                 | 理由                    | 予定時期 |
+| ------ | -------------------- | ----------------------- | -------- |
+| 高     | 状態管理の最適化     | Redux boilerplateの削減 | v1.1     |
+| 中     | コンポーネント分割   | 再利用性の向上          | v1.2     |
+| 低     | テストカバレッジ向上 | 80%以上を目指す         | v1.3     |
 
 ### 10.2 技術アップデート戦略
 

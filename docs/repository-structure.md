@@ -3,12 +3,14 @@
 ## 1. 概要
 
 ### 1.1 ドキュメント情報
+
 - **プロジェクト名**: UnifiedCal
 - **バージョン**: 1.0.0
 - **作成日**: 2026-03-04
 - **技術スタック**: React Native + TypeScript + Expo
 
 ### 1.2 目的
+
 本ドキュメントは、UnifiedCalプロジェクトのディレクトリ構造、ファイル配置規則、命名規則を定義し、開発チーム全体で一貫性のあるコード管理を実現することを目的とする。
 
 ---
@@ -239,15 +241,15 @@ docs/
 
 ### 3.1 基本規則
 
-| ファイルタイプ | 命名規則 | 例 |
-|---------------|---------|-----|
-| React Component | PascalCase + .tsx | `TaskCard.tsx` |
-| TypeScript Module | camelCase + .ts | `authService.ts` |
-| Style File | Component名 + .styles.ts | `TaskCard.styles.ts` |
-| Test File | 対象ファイル名 + .test.ts(x) | `TaskCard.test.tsx` |
-| Type Definition | camelCase + .types.ts | `api.types.ts` |
-| Constants | UPPER_SNAKE_CASE (変数) | `MAX_RETRY_COUNT` |
-| Hook | use + PascalCase | `useTaskManager.ts` |
+| ファイルタイプ    | 命名規則                     | 例                   |
+| ----------------- | ---------------------------- | -------------------- |
+| React Component   | PascalCase + .tsx            | `TaskCard.tsx`       |
+| TypeScript Module | camelCase + .ts              | `authService.ts`     |
+| Style File        | Component名 + .styles.ts     | `TaskCard.styles.ts` |
+| Test File         | 対象ファイル名 + .test.ts(x) | `TaskCard.test.tsx`  |
+| Type Definition   | camelCase + .types.ts        | `api.types.ts`       |
+| Constants         | UPPER_SNAKE_CASE (変数)      | `MAX_RETRY_COUNT`    |
+| Hook              | use + PascalCase             | `useTaskManager.ts`  |
 
 ### 3.2 ディレクトリ内のindex.ts
 
@@ -273,10 +275,12 @@ export * from './Modal';
 ### 4.1 画面コンポーネント（screens/）
 
 **配置基準**:
+
 - ナビゲーションで直接遷移される画面
 - 独立したルートを持つコンポーネント
 
 **例**:
+
 ```typescript
 // screens/calendar/CalendarMonthScreen.tsx
 export const CalendarMonthScreen: React.FC = () => {
@@ -287,11 +291,13 @@ export const CalendarMonthScreen: React.FC = () => {
 ### 4.2 共通コンポーネント（components/）
 
 **配置基準**:
+
 - 2箇所以上で使用される
 - 独立した機能を持つ
 - UIの再利用可能な部品
 
 **ディレクトリ構成**:
+
 ```
 components/common/Button/
 ├── Button.tsx              # メインコンポーネント
@@ -304,11 +310,13 @@ components/common/Button/
 ### 4.3 サービス層（services/）
 
 **配置基準**:
+
 - 外部APIとの通信
 - プラットフォーム固有の機能
 - サードパーティサービス連携
 
 **例**:
+
 ```typescript
 // services/api/client.ts
 export class ApiClient {
@@ -323,11 +331,13 @@ export class ApiClient {
 ### 4.4 状態管理（store/）
 
 **配置基準**:
+
 - グローバルな状態
 - 複数画面で共有される状態
 - 永続化が必要な状態
 
 **例**:
+
 ```typescript
 // store/slices/taskSlice.ts
 export const taskSlice = createSlice({
@@ -384,10 +394,7 @@ SENTRY_DSN=yyy
 
 ```javascript
 module.exports = {
-  extends: [
-    '@react-native-community',
-    'plugin:@typescript-eslint/recommended',
-  ],
+  extends: ['@react-native-community', 'plugin:@typescript-eslint/recommended'],
   rules: {
     'react-native/no-inline-styles': 'error',
     'no-console': ['error', { allow: ['warn', 'error'] }],

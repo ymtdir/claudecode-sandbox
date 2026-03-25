@@ -1,7 +1,7 @@
 # ドキュメント・設定ディレクトリ
 .claude/
 # .steering/
-docs/
+# docs/
 CLAUDE.md
 
 # ログファイル

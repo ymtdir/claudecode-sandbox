@@ -76,6 +76,7 @@
 ### P0 (MVPで絶対必要)
 
 #### 1. タスクの基本操作
+
 ```bash
 task add "ユーザー認証機能の実装"
 task list
@@ -85,6 +86,7 @@ task delete 1
 ```
 
 #### 2. タスクとGitブランチの自動連携
+
 ```bash
 task start 1
 # 自動で feature/task-1-user-authentication ブランチを作って切り替え
@@ -94,12 +96,14 @@ git commit -m "Add login endpoint"
 ```
 
 #### 3. タスクのステータス管理
+
 - `open` (新規)
 - `in_progress` (作業中)
 - `completed` (完了)
 - `archived` (アーカイブ)
 
 #### 4. シンプルなタスク一覧表示
+
 ```bash
 task list
 
@@ -112,6 +116,7 @@ ID  Status       Title                      Branch
 ### P1 (重要だけど後回しでもいい)
 
 #### 5. GitHub Issuesとの連携
+
 ```bash
 task sync
 # ローカルのタスクとGitHub Issuesを同期
@@ -121,6 +126,7 @@ task import --github
 ```
 
 #### 6. タスク完了時の自動処理
+
 ```bash
 task done 1
 # 以下を自動でやってくれる:
@@ -131,6 +137,7 @@ task done 1
 ```
 
 #### 7. タスクの絞り込み・検索
+
 ```bash
 task list --status in_progress
 task list --assignee me
@@ -138,6 +145,7 @@ task search "認証"
 ```
 
 #### 8. 優先度と期限の管理
+
 ```bash
 task add "緊急バグ修正" --priority high --due 2025-01-20
 task list --sort priority
@@ -146,6 +154,7 @@ task list --sort priority
 ### P2 (あったら嬉しい)
 
 #### 9. チーム機能
+
 ```bash
 task list --team
 # チームメンバー全員のタスク一覧
@@ -155,12 +164,14 @@ task assign 1 @alice
 ```
 
 #### 10. カレンダー表示
+
 ```bash
 task calendar --week
 task calendar --month
 ```
 
 #### 11. 作業時間の記録
+
 ```bash
 task start 1
 # 作業時間の計測開始
@@ -170,6 +181,7 @@ task done 1
 ```
 
 #### 12. タスクのテンプレート
+
 ```bash
 task template create bug-fix
 task add --template bug-fix "ログイン画面のバグ修正"
@@ -181,14 +193,14 @@ task add --template bug-fix "ログイン画面のバグ修正"
 
 ### 既存ツールとの比較
 
-| 特徴 | TaskCLI | Todoist | Trello | GitHub Issues | Linear |
-|------|---------|---------|--------|---------------|--------|
-| CLI操作 | ✅ | ❌ | ❌ | 部分的 | ❌ |
-| Git統合 | ✅✅✅ | ❌ | ❌ | ✅ | ✅ |
-| ブランチ自動作成 | ✅ | ❌ | ❌ | ❌ | ✅ |
-| ターミナル完結 | ✅ | ❌ | ❌ | ❌ | ❌ |
-| 軽量・高速 | ✅ | ✅ | △ | ✅ | △ |
-| チーム機能 | 🚧 | ✅ | ✅ | ✅ | ✅ |
+| 特徴             | TaskCLI | Todoist | Trello | GitHub Issues | Linear |
+| ---------------- | ------- | ------- | ------ | ------------- | ------ |
+| CLI操作          | ✅      | ❌      | ❌     | 部分的        | ❌     |
+| Git統合          | ✅✅✅  | ❌      | ❌     | ✅            | ✅     |
+| ブランチ自動作成 | ✅      | ❌      | ❌     | ❌            | ✅     |
+| ターミナル完結   | ✅      | ❌      | ❌     | ❌            | ❌     |
+| 軽量・高速       | ✅      | ✅      | △      | ✅            | △      |
+| チーム機能       | 🚧      | ✅      | ✅     | ✅            | ✅     |
 
 ### このツールの強み
 
@@ -217,11 +229,13 @@ task add --template bug-fix "ログイン画面のバグ修正"
 ### データの保存方法
 
 **候補1: ローカルファイル（JSON）**
+
 - シンプル、特別なソフトウェア不要
 - `.task/tasks.json` に保存
 - Gitで管理できる（チームで共有できる）
 
 **候補2: SQLite**
+
 - 検索や絞り込みが速い
 - リレーショナルなデータに対応できる
 - ファイルベースで導入が簡単
@@ -242,6 +256,7 @@ task add --template bug-fix "ログイン画面のバグ修正"
 ### CLIフレームワーク
 
 **候補**:
+
 - Commander.js (人気、シンプル)
 - oclif (Salesforce製、多機能)
 - yargs (柔軟)
@@ -253,20 +268,24 @@ task add --template bug-fix "ログイン画面のバグ修正"
 ## 非機能要件（とりあえず）
 
 ### パフォーマンス
+
 - コマンド実行: 100ms以内（体感で即座に反応）
 - タスク一覧表示: 1000件でも1秒以内
 
 ### 使いやすさ
+
 - 初めて使う人でも5分で基本操作を覚えられる
 - ヘルプコマンドで全機能を確認できる
 - エラーメッセージが分かりやすい
 
 ### 信頼性
+
 - データが消えない（自動バックアップ）
 - エラーが起きたら元に戻せる
 - 危険な操作には確認を求める
 
 ### 拡張性
+
 - プラグインシステム（将来的に）
 - カスタムコマンドを定義できる
 - 他のツールと連携できる（Slack、Discordなど）
@@ -276,11 +295,13 @@ task add --template bug-fix "ログイン画面のバグ修正"
 ## 成功指標（とりあえず）
 
 ### ユーザー視点
+
 - **導入率**: 開発者10人に紹介して、3人以上が1週間続けて使ってくれる
 - **満足度**: Net Promoter Score (NPS) が30以上
 - **時間削減**: タスク管理にかかる時間が半分になる
 
 ### プロダクト視点
+
 - **アクティブユーザー**: リリース後3ヶ月で100人
 - **GitHub Stars**: リリース後6ヶ月で500
 - **継続率**: 1ヶ月後も使い続けている人が60%以上

@@ -17,6 +17,7 @@
 **症状**: `Cannot find module` や `Failed to resolve import` エラーが表示される
 
 **原因**:
+
 - 依存関係のインストール漏れ
 - node_modules のキャッシュ破損
 - TypeScript の型定義ファイルの問題
@@ -38,6 +39,7 @@ npm run dev
 **症状**: `Type 'X' is not assignable to type 'Y'` などの型エラー
 
 **原因**:
+
 - 型定義の不整合
 - 依存パッケージの型定義更新
 
@@ -56,6 +58,7 @@ npm update @types/react @types/react-dom @types/node
 **症状**: `npm install` が失敗する、または依存関係の競合エラー
 
 **原因**:
+
 - package-lock.json の破損
 - npm のキャッシュ問題
 - Node.js バージョンの不一致
@@ -97,6 +100,7 @@ PORT=3000 npm run dev
 **症状**: コードを変更してもブラウザが自動更新されない
 
 **原因**:
+
 - ファイルウォッチャーの制限
 - ブラウザのキャッシュ
 - WebSocket 接続の問題
@@ -116,6 +120,7 @@ npm run dev
 **症状**: `http://localhost:5173` にアクセスしても何も表示されない
 
 **原因**:
+
 - JavaScript エラーでアプリが起動していない
 - ビルドエラー
 - ブラウザの互換性
@@ -139,6 +144,7 @@ npm run build
 **症状**: `Error: Cannot find module 'vitest/config'` などの設定エラー
 
 **原因**:
+
 - vitest のインストール漏れ
 - vitest.config.ts の設定ミス
 
@@ -160,6 +166,7 @@ npm test
 **症状**: `Test timeout of 5000ms exceeded` エラー
 
 **原因**:
+
 - 非同期処理の待機漏れ
 - 無限ループ
 - データベース接続の問題
@@ -185,6 +192,7 @@ export default defineConfig({
 **症状**: `npm run test:run -- --coverage` でカバレッジが生成されない
 
 **原因**:
+
 - @vitest/coverage-v8 のインストール漏れ
 - coverage ディレクトリの権限問題
 
@@ -208,6 +216,7 @@ npm run test:run -- --coverage
 **症状**: `import.meta.env.VITE_API_URL` が undefined
 
 **原因**:
+
 - .env ファイルの配置場所が間違っている
 - 環境変数名が `VITE_` で始まっていない
 - 開発サーバーの再起動が必要
@@ -233,6 +242,7 @@ npm run dev
 **原因**: 複数の .env ファイルがある場合の優先順位
 
 **優先順位（高 → 低）**:
+
 1. `.env.local` (すべての環境で優先、Git にコミットしない)
 2. `.env.[mode].local` (特定モードで優先、Git にコミットしない)
 3. `.env.[mode]` (特定モード用)
@@ -253,6 +263,7 @@ echo $VITE_API_URL
 **症状**: `ESLint: Parsing error` や警告が大量に表示される
 
 **原因**:
+
 - eslint.config.js の設定ミス
 - ESLint プラグインのバージョン不整合
 
@@ -274,6 +285,7 @@ npm install --save-dev eslint @eslint/js typescript-eslint
 **症状**: `git commit` が失敗する、または Husky が動作しない
 
 **原因**:
+
 - Husky のインストール不足
 - pre-commit スクリプトのエラー
 - lint-staged の設定ミス
@@ -300,6 +312,7 @@ git commit --no-verify -m "message"
 **症状**: `npm run format:check` が失敗する
 
 **原因**:
+
 - コードフォーマットが Prettier の規約に違反
 - .prettierrc の設定ミス
 

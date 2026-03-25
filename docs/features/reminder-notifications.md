@@ -7,16 +7,19 @@
 ## 機能一覧
 
 ### 1. 時間ベースリマインダー
+
 - タスクの期限前に通知（5分前、10分前、30分前など）
 - カスタム時間設定
 
 ### 2. 繰り返しリマインダー
+
 - 毎日
 - 毎週
 - 毎月
 - カスタム間隔
 
 ### 3. 位置ベースリマインダー（将来実装予定）
+
 - 特定の場所に到着/出発時に通知
 
 ## 使用方法
@@ -168,7 +171,7 @@ const notification = new Notification(title, {
 
 ```javascript
 // sw.js
-self.addEventListener('notificationclick', function(event) {
+self.addEventListener('notificationclick', function (event) {
   event.notification.close();
   event.waitUntil(
     clients.openWindow('/tasks/' + event.notification.data.taskId)
