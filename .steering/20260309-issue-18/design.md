@@ -3,9 +3,11 @@
 ## 実装アプローチ
 
 ### 1. パッケージのインストール
+
 React Navigation 6系のWebベース実装を使用します。React Native固有のパッケージは使用せず、Webプラットフォームで動作する実装を行います。
 
 ### 2. ディレクトリ構造
+
 ```
 src/
   navigation/
@@ -63,6 +65,7 @@ React NavigationはReact Native向けのライブラリですが、今回はVite
 ### 5. コミット戦略
 
 各機能単位で細かくコミットします：
+
 - feat: ナビゲーション型定義を追加
 - feat: プレースホルダー画面を作成
 - feat: タブナビゲーションコンポーネントを実装
@@ -72,12 +75,14 @@ React NavigationはReact Native向けのライブラリですが、今回はVite
 ## 技術的考慮事項
 
 ### React Router v6の採用理由
+
 - Vite + React (Web)環境に最適
 - URLベースのルーティング
 - ネストされたルートのサポート
 - 型安全性の確保が容易
 
 ### UI実装方針
+
 - 既存のデザインシステムコンポーネントを活用
 - レスポンシブデザインを考慮
 - アクセシビリティ対応
@@ -85,9 +90,11 @@ React NavigationはReact Native向けのライブラリですが、今回はVite
 ## リスクと対策
 
 ### リスク
+
 - React NavigationはReact Native向けのため、Web環境では動作しない
 
 ### 対策
+
 - React Router v6を使用してWeb向けに実装
 - タブUIやモーダルはカスタム実装
 - ナビゲーションのAPIはReact Navigation風に保つことで、将来的な移行を容易にする

@@ -12,14 +12,15 @@
    - 最も多いプレフィックスを主要なPRタイプとして判定
 
 2. **ラベルマッピングロジック**
+
    ```javascript
    const labelMapping = {
-     'feat': 'enhancement',
-     'fix': 'bug',
-     'docs': 'documentation',
-     'refactor': 'refactor',
-     'test': 'test',
-     'chore': 'chore'
+     feat: 'enhancement',
+     fix: 'bug',
+     docs: 'documentation',
+     refactor: 'refactor',
+     test: 'test',
+     chore: 'chore',
    };
    ```
 

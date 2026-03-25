@@ -1,20 +1,24 @@
 # 要求内容
 
 ## Issue番号
+
 #21
 
 ## 概要
+
 タスクデータを永続化するためのローカルデータベースを実装します。WatermelonDBまたはSQLiteを使用して、オフラインでもデータが保持される仕組みを構築します。
 
 ## 実装内容
 
 ### 1. WatermelonDBのインストールと設定
+
 ```bash
 npm install @nozbe/watermelondb
 npm install @nozbe/with-observables
 ```
 
 ### 2. データベーススキーマ定義
+
 ```typescript
 // src/database/schema.ts
 import { appSchema, tableSchema } from '@nozbe/watermelondb';
@@ -34,16 +38,16 @@ export const schema = appSchema({
         { name: 'completed_at', type: 'number', isOptional: true },
         { name: 'note', type: 'string', isOptional: true },
         { name: 'created_at', type: 'number' },
-        { name: 'updated_at', type: 'number' }
-      ]
+        { name: 'updated_at', type: 'number' },
+      ],
     }),
     tableSchema({
       name: 'calendars',
       columns: [
         { name: 'name', type: 'string' },
         { name: 'color', type: 'string' },
-        { name: 'is_default', type: 'boolean' }
-      ]
+        { name: 'is_default', type: 'boolean' },
+      ],
     }),
     tableSchema({
       name: 'reminders',
@@ -51,14 +55,15 @@ export const schema = appSchema({
         { name: 'task_id', type: 'string', isIndexed: true },
         { name: 'type', type: 'string' },
         { name: 'time_offset', type: 'number', isOptional: true },
-        { name: 'is_active', type: 'boolean' }
-      ]
-    })
-  ]
+        { name: 'is_active', type: 'boolean' },
+      ],
+    }),
+  ],
 });
 ```
 
 ### 3. モデルクラスの定義
+
 ```typescript
 // src/database/models/Task.ts
 import { Model } from '@nozbe/watermelondb';
@@ -79,7 +84,7 @@ export class Task extends Model {
   @readonly @date('updated_at') updatedAt!: Date;
 
   async markAsCompleted() {
-    await this.update(task => {
+    await this.update((task) => {
       task.status = 'completed';
       task.completedAt = new Date();
     });
@@ -88,6 +93,7 @@ export class Task extends Model {
 ```
 
 ### 4. データベース初期化
+
 ```typescript
 // src/database/index.ts
 import { Database } from '@nozbe/watermelondb';
@@ -110,6 +116,7 @@ export const database = new Database({
 ```
 
 ### 5. リポジトリパターンの実装
+
 ```typescript
 // src/repositories/TaskRepository.ts
 import { database } from '../database';
@@ -130,30 +137,24 @@ export class TaskRepository {
 
   static async create(data: Partial): Promise {
     return await database.write(async () => {
-      return await database.collections
-        .get('tasks')
-        .create(task => {
-          Object.assign(task, data);
-        });
+      return await database.collections.get('tasks').create((task) => {
+        Object.assign(task, data);
+      });
     });
   }
 
   static async update(id: string, data: Partial): Promise {
-    const task = await database.collections
-      .get('tasks')
-      .find(id);
+    const task = await database.collections.get('tasks').find(id);
 
     return await database.write(async () => {
-      return await task.update(t => {
+      return await task.update((t) => {
         Object.assign(t, data);
       });
     });
   }
 
   static async delete(id: string): Promise {
-    const task = await database.collections
-      .get('tasks')
-      .find(id);
+    const task = await database.collections.get('tasks').find(id);
 
     await database.write(async () => {
       await task.markAsDeleted();
@@ -163,6 +164,7 @@ export class TaskRepository {
 ```
 
 ### 6. データベースフック
+
 ```typescript
 // src/hooks/useDatabase.ts
 import { useDatabase } from '@nozbe/watermelondb/hooks';
@@ -175,9 +177,7 @@ export function useTasks(date?: Date) {
     const collection = database.collections.get('tasks');
 
     if (date) {
-      return collection
-        .query(Q.where('date', date.getTime()))
-        .observe();
+      return collection.query(Q.where('date', date.getTime())).observe();
     }
 
     return collection.query().observe();
@@ -186,6 +186,7 @@ export function useTasks(date?: Date) {
 ```
 
 ### 7. マイグレーション設定
+
 ```typescript
 // src/database/migrations.ts
 import { schemaMigrations } from '@nozbe/watermelondb/Schema/migrations';

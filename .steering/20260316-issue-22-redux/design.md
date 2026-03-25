@@ -52,8 +52,8 @@ src/
 ```typescript
 interface StoreState {
   tasks: {
-    entities: Record<string, Task>;  // 正規化
-    ids: string[];                   // 順序管理
+    entities: Record<string, Task>; // 正規化
+    ids: string[]; // 順序管理
     selectedId: string | null;
     filter: TaskFilter;
     loading: boolean;
@@ -76,11 +76,13 @@ interface StoreState {
 ## 実装方針
 
 ### フェーズ1: 基盤構築
+
 1. パッケージインストール
 2. ストア基本設定
 3. 型定義の作成
 
 ### フェーズ2: Slice実装
+
 1. tasksSliceの実装
    - 同期アクション
    - 非同期アクション（createAsyncThunk）
@@ -89,21 +91,25 @@ interface StoreState {
 3. syncSliceの実装
 
 ### フェーズ3: セレクター実装
+
 1. 基本セレクター
 2. メモ化セレクター（createSelector）
 3. 派生データの計算
 
 ### フェーズ4: カスタムフック
+
 1. 型付きフック
 2. useTasks統合フック
 3. エラーハンドリング
 
 ### フェーズ5: 永続化設定
+
 1. redux-persist設定
 2. ホワイトリスト設定
 3. マイグレーション対応
 
 ### フェーズ6: 統合とテスト
+
 1. Provider設定
 2. 動作確認
 3. パフォーマンス確認
@@ -111,11 +117,13 @@ interface StoreState {
 ## パフォーマンス最適化
 
 ### メモ化戦略
+
 - createSelectorによる派生データのメモ化
 - shallowEqualによる再レンダリング防止
 - バッチ更新の活用
 
 ### 正規化の利点
+
 - 更新の効率化
 - データの一貫性
 - メモリ使用量の最適化
@@ -123,20 +131,19 @@ interface StoreState {
 ## エラーハンドリング
 
 ### 非同期処理
+
 ```typescript
-createAsyncThunk(
-  'tasks/fetch',
-  async (_, { rejectWithValue }) => {
-    try {
-      return await TaskRepository.findAll();
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
+createAsyncThunk('tasks/fetch', async (_, { rejectWithValue }) => {
+  try {
+    return await TaskRepository.findAll();
+  } catch (error) {
+    return rejectWithValue(error.message);
   }
-);
+});
 ```
 
 ### エラー状態の管理
+
 - loading/error状態の一元管理
 - ユーザーフレンドリーなエラーメッセージ
 - リトライ機能の実装

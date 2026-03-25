@@ -3,6 +3,7 @@
 ## アーキテクチャ概要
 
 ### システム構成
+
 ```
 ┌─────────────────────────────────────┐
 │     UI Layer (React Components)      │
@@ -16,24 +17,26 @@
 ## コンポーネント設計
 
 ### 1. NotificationService
+
 ```typescript
 // src/services/NotificationService.ts
 class NotificationService {
   // 権限リクエスト
-  requestPermission(): Promise<boolean>
+  requestPermission(): Promise<boolean>;
 
   // 通知スケジューリング
-  scheduleNotification(task: Task, reminder: Reminder): void
+  scheduleNotification(task: Task, reminder: Reminder): void;
 
   // 通知キャンセル
-  cancelNotification(notificationId: string): void
+  cancelNotification(notificationId: string): void;
 
   // スヌーズ処理
-  snoozeNotification(taskId: string, minutes: number): void
+  snoozeNotification(taskId: string, minutes: number): void;
 }
 ```
 
 ### 2. ReminderSettings Component
+
 ```typescript
 // src/components/ReminderSettings.tsx
 interface ReminderSettingsProps {
@@ -43,20 +46,22 @@ interface ReminderSettingsProps {
 ```
 
 ### 3. NotificationHandler
+
 ```typescript
 // src/utils/NotificationHandler.ts
 class NotificationHandler {
   // 通知クリック時の処理
-  handleNotificationClick(event: NotificationEvent): void
+  handleNotificationClick(event: NotificationEvent): void;
 
   // アクションボタンの処理
-  handleAction(action: string, taskId: string): void
+  handleAction(action: string, taskId: string): void;
 }
 ```
 
 ## データモデル
 
 ### Reminder
+
 ```typescript
 interface Reminder {
   id: string;
@@ -80,9 +85,10 @@ interface RepeatRule {
 ## ブラウザ通知APIの使用
 
 ### Notification API
+
 ```javascript
 // 権限確認
-if (Notification.permission === "granted") {
+if (Notification.permission === 'granted') {
   // 通知作成
   const notification = new Notification(title, {
     body: message,
@@ -92,13 +98,14 @@ if (Notification.permission === "granted") {
     requireInteraction: true,
     actions: [
       { action: 'complete', title: '完了' },
-      { action: 'snooze', title: 'スヌーズ' }
-    ]
+      { action: 'snooze', title: 'スヌーズ' },
+    ],
   });
 }
 ```
 
 ### Service Worker（PWA対応）
+
 ```javascript
 // sw.js
 self.addEventListener('notificationclick', (event) => {
@@ -113,26 +120,31 @@ self.addEventListener('notificationclick', (event) => {
 ## 実装順序
 
 ### フェーズ1: 基本機能
+
 1. NotificationServiceの実装
 2. 権限リクエスト機能
 3. 基本的な通知表示
 
 ### フェーズ2: リマインダー設定
+
 1. ReminderSettings UIの実装
 2. データモデルの定義
 3. Redux統合
 
 ### フェーズ3: 通知スケジューリング
+
 1. 時間ベース通知の実装
 2. 事前通知の実装
 3. 繰り返し通知の実装
 
 ### フェーズ4: 通知ハンドリング
+
 1. 通知クリック処理
 2. アクションボタン処理
 3. スヌーズ機能
 
 ### フェーズ5: PWA対応
+
 1. Service Workerの設定
 2. バックグラウンド通知
 3. オフライン対応
@@ -140,16 +152,19 @@ self.addEventListener('notificationclick', (event) => {
 ## 技術選定理由
 
 ### Web Notification API
+
 - ブラウザ標準API
 - React Native Webとの親和性
 - クロスブラウザ対応
 
 ### Service Worker
+
 - バックグラウンド処理
 - オフライン対応
 - プッシュ通知の基盤
 
 ### IndexedDB
+
 - リマインダー設定の永続化
 - オフライン時のデータ保持
 - 大容量データの保存
@@ -163,13 +178,16 @@ self.addEventListener('notificationclick', (event) => {
 ## テスト戦略
 
 ### ユニットテスト
+
 - NotificationServiceのメソッドテスト
 - リマインダー設定のロジックテスト
 
 ### 統合テスト
+
 - 通知スケジューリングの動作確認
 - Redux統合のテスト
 
 ### 手動テスト
+
 - 実際の通知表示確認
 - 各種ブラウザでの動作確認

@@ -28,11 +28,13 @@ React + Vite + Vitestによるモダンなテスト環境を構築します。Te
 ## テスト設計原則
 
 ### 1. Testing Library のベストプラクティスに従う
+
 - 実装の詳細ではなく、ユーザーの使い方をテスト
 - `getByRole`, `getByLabelText`等のセマンティックなクエリを優先
 - `data-testid`は最後の手段
 
 ### 2. テストピラミッド
+
 ```
      E2E (今回はスコープ外)
     /            \
@@ -42,6 +44,7 @@ React + Vite + Vitestによるモダンなテスト環境を構築します。Te
 ```
 
 ### 3. AAA Pattern
+
 - **Arrange**: テストデータとモックの準備
 - **Act**: テスト対象の関数/コンポーネントを実行
 - **Assert**: 期待値との比較
@@ -51,11 +54,13 @@ React + Vite + Vitestによるモダンなテスト環境を構築します。Te
 ### 1. テスト設定ファイル(vitest.setup.ts)
 
 **責務**:
+
 - グローバルなモック設定
 - Testing Libraryのセットアップ
 - カスタムマッチャーの登録
 
 **実装の要点**:
+
 ```typescript
 import '@testing-library/jest-dom';
 import { cleanup } from '@testing-library/react';
@@ -87,11 +92,13 @@ global.sessionStorage = localStorageMock as any;
 ### 2. テストユーティリティ(src/utils/test-utils.tsx)
 
 **責務**:
+
 - Reduxストア付きのカスタムrender関数
 - ルーター付きのrender関数
 - 共通のモックデータ生成
 
 **実装の要点**:
+
 ```typescript
 import { render, RenderOptions } from '@testing-library/react';
 import { configureStore } from '@reduxjs/toolkit';
@@ -128,10 +135,12 @@ export function renderWithProviders(
 ### 3. モックファクトリー(src/utils/test-factories.ts)
 
 **責務**:
+
 - テストデータの生成
 - 一貫性のあるモックオブジェクト作成
 
 **実装の要点**:
+
 ```typescript
 import { Task, Calendar } from '../types';
 
@@ -155,6 +164,7 @@ export const mockTaskList = (count: number): Task[] =>
 ## データフロー
 
 ### コンポーネントテストのフロー
+
 ```
 1. renderWithProviders()でコンポーネントをレンダリング
 2. screen.getByRole()等でDOM要素を取得
@@ -164,6 +174,7 @@ export const mockTaskList = (count: number): Task[] =>
 ```
 
 ### Hooksテストのフロー
+
 ```
 1. renderHook()でhooksをレンダリング
 2. result.current経由で値にアクセス
@@ -175,6 +186,7 @@ export const mockTaskList = (count: number): Task[] =>
 ## エラーハンドリング戦略
 
 ### テスト内でのエラーハンドリング
+
 ```typescript
 // ✅ Good
 it('should throw ValidationError for invalid input', () => {
@@ -185,13 +197,14 @@ it('should throw ValidationError for invalid input', () => {
 it('should handle API error', async () => {
   const { result } = renderHook(() => useTaskManager());
 
-  await expect(result.current.createTask({ title: '' }))
-    .rejects
-    .toThrow('Validation failed');
+  await expect(result.current.createTask({ title: '' })).rejects.toThrow(
+    'Validation failed'
+  );
 });
 ```
 
 ### エラー表示のテスト
+
 ```typescript
 it('should display error message on failure', async () => {
   const user = userEvent.setup();
@@ -209,6 +222,7 @@ it('should display error message on failure', async () => {
 ### ユニットテスト
 
 #### コンポーネント
+
 - **対象**: Button, Input, Modal, TaskCard等
 - **テスト内容**:
   - Props渡しによる表示変更
@@ -217,6 +231,7 @@ it('should display error message on failure', async () => {
   - アクセシビリティ(role, aria-label等)
 
 #### Redux Slices
+
 - **対象**: taskSlice, calendarSlice等
 - **テスト内容**:
   - Reducerの状態変更
@@ -225,6 +240,7 @@ it('should display error message on failure', async () => {
   - Selectorの値計算
 
 #### Hooks
+
 - **対象**: useTaskManager, useCalendar等
 - **テスト内容**:
   - 初期状態
@@ -233,6 +249,7 @@ it('should display error message on failure', async () => {
   - エラーハンドリング
 
 #### Utilities
+
 - **対象**: date.ts, validation.ts等
 - **テスト内容**:
   - 正常系の入出力
@@ -242,6 +259,7 @@ it('should display error message on failure', async () => {
 ### 統合テスト
 
 #### タスク作成フロー
+
 ```typescript
 describe('Task Creation Flow', () => {
   it('should create a task from UI to store', async () => {
@@ -264,6 +282,7 @@ describe('Task Creation Flow', () => {
 ## 依存ライブラリ
 
 既にインストール済み:
+
 ```json
 {
   "devDependencies": {

@@ -1,11 +1,13 @@
 # Issue #18: 【Step 4】ナビゲーション実装 - React Navigationの設定
 
 ## 概要
+
 React Navigation 6を使用して、アプリ内の画面遷移を管理するナビゲーション構造を実装します。タブナビゲーション、スタックナビゲーション、モーダル表示を組み合わせた構造を構築します。
 
 ## 実装内容
 
 ### 1. React Navigationのインストール
+
 ```bash
 npm install @react-navigation/native
 npm install @react-navigation/bottom-tabs
@@ -14,6 +16,7 @@ npm install react-native-screens
 ```
 
 ### 2. ナビゲーション構造の実装
+
 ```typescript
 // src/navigation/AppNavigator.tsx
 - RootNavigator（全体）
@@ -28,6 +31,7 @@ npm install react-native-screens
 ```
 
 ### 3. タブナビゲーターの実装
+
 ```typescript
 // src/navigation/MainTabNavigator.tsx
 const Tab = createBottomTabNavigator();
@@ -44,6 +48,7 @@ export function MainTabNavigator() {
 ```
 
 ### 4. スタックナビゲーターの実装
+
 ```typescript
 // src/navigation/CalendarStack.tsx
 const Stack = createStackNavigator();
@@ -60,6 +65,7 @@ export function CalendarStack() {
 ```
 
 ### 5. ナビゲーション型定義
+
 ```typescript
 // src/navigation/types.ts
 export type RootStackParamList = {
@@ -77,12 +83,14 @@ export type MainTabParamList = {
 ```
 
 ### 6. 画面遷移フックの実装
+
 ```typescript
 // src/hooks/useNavigation.ts
 import { useNavigation } from '@react-navigation/native';
 ```
 
 ### 7. プレースホルダー画面の作成
+
 - CalendarScreen
 - StatisticsScreen
 - SettingsScreen

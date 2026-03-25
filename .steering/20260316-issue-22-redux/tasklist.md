@@ -19,6 +19,7 @@
 ## フェーズ2: Slice実装
 
 ### tasksSlice
+
 - [x] src/store/slices/tasksSlice.tsの作成
   - [x] 初期状態の定義
   - [x] 同期アクション（selectTask, setFilter, completeTask）
@@ -29,6 +30,7 @@
   - [x] extraReducersの実装
 
 ### calendarSlice
+
 - [x] src/store/slices/calendarSlice.tsの作成
   - [x] 初期状態の定義
   - [x] selectDateアクション
@@ -36,6 +38,7 @@
   - [x] updateMarkedDatesアクション
 
 ### syncSlice
+
 - [x] src/store/slices/syncSlice.tsの作成
   - [x] 初期状態の定義
   - [x] startSyncアクション
@@ -103,16 +106,19 @@
 **所要時間**: 約30分
 
 **計画と実績の差分**:
+
 - 既存のTask型とTaskSchema型の不整合があり、型定義の調整が必要だった
 - @react-native-async-storage/async-storageの代わりにredux-persist/lib/storageを使用（Web用）
 - 既存のuseTasks.tsとの競合を避けるため、useReduxTasks.tsという別名で作成
 
 **学んだこと**:
+
 - TypeScriptのverbatimModuleSyntax設定により、型インポートには明示的にtypeキーワードが必要
 - 既存のDexieベースのデータ管理とReduxの並存が可能
 - TaskSchemaとTask型の差異を適切に管理する必要性
 
 **次回への改善提案**:
+
 - 型定義の一元化（TaskとTaskSchemaの統合）
 - DexieとReduxの使い分けガイドラインの作成
 - マイグレーション戦略の検討（Dexie→Redux）

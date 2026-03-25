@@ -1,6 +1,6 @@
 # ドキュメント・設定ディレクトリ
 .claude/
-.steering/
+# .steering/
 docs/
 CLAUDE.md
 

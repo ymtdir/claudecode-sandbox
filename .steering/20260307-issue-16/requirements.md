@@ -1,16 +1,19 @@
 # 要求仕様書
 
 ## Issue情報
+
 - **Issue番号**: #16
 - **タイトル**: 【Step 2】基本プロジェクト構造 - ディレクトリ構成とベースコード
 - **タイプ**: enhancement, architecture
 
 ## 要求概要
+
 UnifiedCalアプリの基本的なディレクトリ構造を構築し、開発の土台となるベースコードを実装します。アーキテクチャ設計書に基づいた標準的なReact Nativeプロジェクト構造を確立します。
 
 ## 実装要求
 
 ### 1. ディレクトリ構造の作成
+
 ```
 UnifiedCal/
 ├── src/
@@ -44,6 +47,7 @@ UnifiedCal/
 ```
 
 ### 2. 基本的な型定義
+
 ```typescript
 // src/types/index.ts
 export interface Task {
@@ -66,6 +70,7 @@ export interface Calendar {
 ```
 
 ### 3. 定数ファイルの作成
+
 ```typescript
 // src/constants/index.ts
 export const APP_NAME = 'UnifiedCal';
@@ -78,11 +83,13 @@ export const COLORS = {
 ```
 
 ### 4. ユーティリティ関数の実装
+
 - 日付フォーマット関数
 - バリデーション関数
 - ストレージヘルパー関数
 
 ### 5. App.tsx の基本実装
+
 ```typescript
 // App.tsx
 import React from 'react';
@@ -126,4 +133,5 @@ export default function App() {
 - 動作するApp.tsx
 
 ## 作業開始日
+
 2026-03-07

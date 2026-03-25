@@ -40,38 +40,38 @@ Component → Hook → Repository → Dexie → IndexedDB
 
 ### tasksテーブル
 
-| カラム名 | 型 | 必須 | インデックス | 説明 |
-|---------|---|------|------------|------|
-| id | string | ✓ | Primary | UUID |
-| title | string | ✓ | - | タスク名 |
-| category | string | ✓ | ✓ | カテゴリ |
-| date | Date | ✓ | ✓ | 実行日 |
-| time | string | - | - | 時刻 |
-| priority | string | ✓ | - | 優先度 |
-| status | string | ✓ | ✓ | ステータス |
-| completedAt | Date | - | - | 完了日時 |
-| note | string | - | - | メモ |
-| createdAt | Date | ✓ | - | 作成日時 |
-| updatedAt | Date | ✓ | - | 更新日時 |
+| カラム名    | 型     | 必須 | インデックス | 説明       |
+| ----------- | ------ | ---- | ------------ | ---------- |
+| id          | string | ✓    | Primary      | UUID       |
+| title       | string | ✓    | -            | タスク名   |
+| category    | string | ✓    | ✓            | カテゴリ   |
+| date        | Date   | ✓    | ✓            | 実行日     |
+| time        | string | -    | -            | 時刻       |
+| priority    | string | ✓    | -            | 優先度     |
+| status      | string | ✓    | ✓            | ステータス |
+| completedAt | Date   | -    | -            | 完了日時   |
+| note        | string | -    | -            | メモ       |
+| createdAt   | Date   | ✓    | -            | 作成日時   |
+| updatedAt   | Date   | ✓    | -            | 更新日時   |
 
 ### calendarsテーブル
 
-| カラム名 | 型 | 必須 | インデックス | 説明 |
-|---------|---|------|------------|------|
-| id | string | ✓ | Primary | UUID |
-| name | string | ✓ | - | カレンダー名 |
-| color | string | ✓ | - | 色コード |
-| isDefault | boolean | ✓ | - | デフォルトフラグ |
+| カラム名  | 型      | 必須 | インデックス | 説明             |
+| --------- | ------- | ---- | ------------ | ---------------- |
+| id        | string  | ✓    | Primary      | UUID             |
+| name      | string  | ✓    | -            | カレンダー名     |
+| color     | string  | ✓    | -            | 色コード         |
+| isDefault | boolean | ✓    | -            | デフォルトフラグ |
 
 ### remindersテーブル
 
-| カラム名 | 型 | 必須 | インデックス | 説明 |
-|---------|---|------|------------|------|
-| id | string | ✓ | Primary | UUID |
-| taskId | string | ✓ | ✓ | タスクID |
-| type | string | ✓ | - | リマインダー種別 |
-| timeOffset | number | - | - | 時間オフセット |
-| isActive | boolean | ✓ | - | 有効フラグ |
+| カラム名   | 型      | 必須 | インデックス | 説明             |
+| ---------- | ------- | ---- | ------------ | ---------------- |
+| id         | string  | ✓    | Primary      | UUID             |
+| taskId     | string  | ✓    | ✓            | タスクID         |
+| type       | string  | ✓    | -            | リマインダー種別 |
+| timeOffset | number  | -    | -            | 時間オフセット   |
+| isActive   | boolean | ✓    | -            | 有効フラグ       |
 
 ## 実装詳細
 
@@ -90,7 +90,7 @@ class UnifiedCalDatabase extends Dexie {
     this.version(1).stores({
       tasks: 'id, category, date, status, [date+status]',
       calendars: 'id',
-      reminders: 'id, taskId'
+      reminders: 'id, taskId',
     });
   }
 }
@@ -206,11 +206,11 @@ try {
 
 ## リスクと対策
 
-| リスク | 影響 | 対策 |
-|-------|-----|------|
-| ブラウザ互換性 | 一部ブラウザで動作しない | ポリフィル使用 |
-| ストレージ制限 | データ保存失敗 | 古いデータの自動削除 |
-| データ破損 | アプリ動作不能 | 定期バックアップ |
+| リスク         | 影響                     | 対策                 |
+| -------------- | ------------------------ | -------------------- |
+| ブラウザ互換性 | 一部ブラウザで動作しない | ポリフィル使用       |
+| ストレージ制限 | データ保存失敗           | 古いデータの自動削除 |
+| データ破損     | アプリ動作不能           | 定期バックアップ     |
 
 ## 今後の拡張性
 
