@@ -15,7 +15,7 @@
 | ------------------------------ | -------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | SwiftUI                        | iOS 17+ 同梱版 | UI 構築                      | 宣言的 UI で iOS 標準アプリ風の見た目・挙動（Dynamic Type / ダークモード / SF Symbols）を低コストで実現可能。要件「iOS 標準カレンダー / リマインダー準拠」と最も親和性が高い |
 | SwiftData                      | iOS 17+ 同梱版 | ローカル永続化               | SwiftUI と統合された宣言的データ層。学習対象として現行の Apple 推奨スタックに揃えられ、将来的な保守性も高い。要件「ローカル永続化」を満たすシンプルな選択肢                  |
-| Observation（@Observable）     | iOS 17+ 同梱版 | ViewModel の状態管理         | `ObservableObject` の後継。SwiftUI と統合された軽量な状態管理を提供                                                                                                          |
+| Observation（@Observable）     | iOS 17+ 同梱版 | 共有状態管理（必要時のみ）   | `ObservableObject` の後継。複数 View で共有する状態が必要な場合に限定使用                                                                                                    |
 | Foundation                     | iOS 標準       | 日付・数値・通貨フォーマット | `Calendar` / `DateFormatter` / `NumberFormatter` をロケール対応の表示に利用                                                                                                  |
 | Swift Testing（または XCTest） | Xcode 同梱版   | ユニットテスト               | Repository / ViewModel のテスト用。Swift Testing が利用可能な環境では優先採用                                                                                                |
 
@@ -34,14 +34,15 @@
 
 ### アーキテクチャパターン
 
-**MVVM + 軽量 Repository パターン** を採用する。
+**MV パターン（Apple 提唱の SwiftUI 標準アプローチ）** を採用する。
 
 選定理由:
 
-- SwiftUI は View が宣言的で状態に駆動されるため、状態と画面ロジックを分離する MVVM が自然に適合する
-- ロジックを `@Observable` な ViewModel に閉じ込めることで、View をテスト不能な部分から解放しユニットテスト可能性を確保する
-- 永続化を Repository インターフェース越しに扱うことで、ViewModel のテスト時に SwiftData の実体に依存しないモック差し替えが可能
-- ミニマルなアプリ規模に対して、クリーンアーキテクチャほどの厳格な層分けは過剰。中間としての MVVM + Repository が妥当
+- Apple は SwiftUI で MVVM を推奨しておらず、`@Observable` / `@Query` / `@Environment(\.modelContext)` を活用した **View が直接 Model を観測する設計** を提唱している（WWDC 2023 以降）
+- ViewModel 層を持たないことでコード量を最小化でき、ミニマリスト方針と整合する
+- SwiftUI 本来のイディオム（`@Query` で SwiftData を直接取得、`@State` でローカル UI 状態を保持）を学習対象にできる
+- 集計などの純粋ロジックは `struct` の純粋関数として切り出し、ユニットテスト可能性を維持する
+- アプリ規模が小さく、ViewModel のレイヤーがもたらす抽象化メリットより、直接性のメリットが上回る
 
 ```mermaid
 graph TB
@@ -62,24 +63,12 @@ graph TB
         V7[TransactionEntrySheet<br/>編集 / カレンダーからの遷移]
         V8[FixedExpenseListView]
     end
-    subgraph "ViewModel 層 (@Observable)"
-        VM1[QuickEntryViewModel]
-        VM2[CalendarViewModel]
-        VM3[ReportViewModel]
-        VM4[BudgetViewModel]
-        VM5[CategoryViewModel]
-        VM7[TransactionEntryViewModel]
-        VM8[FixedExpenseViewModel]
+    subgraph "Model 層"
+        M1["@Model エンティティ<br/>Transaction / Category / Budget / FixedExpense"]
+        M2["純粋ロジック (struct)<br/>SummaryAggregator / BudgetCalculator<br/>Validator / DateRange / CurrencyFormatter"]
     end
-    subgraph "Repository 層 (Protocol)"
-        R1[TransactionRepository]
-        R2[CategoryRepository]
-        R3[BudgetRepository]
-        R4[FixedExpenseRepository]
-    end
-    subgraph "Model / 永続化層"
-        M1[SwiftData @Model]
-        DB[(SQLite via SwiftData)]
+    subgraph "Persistence"
+        DB[(SwiftData / SQLite)]
     end
 
     T1 --> V1
@@ -92,38 +81,23 @@ graph TB
     V2 -.ダブルタップ.-> V7
     V2 -.セルから編集.-> V7
 
-    V1 --> VM1
-    V2 --> VM2
-    V3 --> VM3
-    V4 --> VM4
-    V6 --> VM5
-    V7 --> VM7
-    V8 --> VM8
+    V1 -.@Query / ModelContext.-> M1
+    V2 -.@Query / ModelContext.-> M1
+    V3 -.@Query.-> M1
+    V4 -.@Query / ModelContext.-> M1
+    V6 -.@Query / ModelContext.-> M1
+    V7 -.ModelContext.-> M1
+    V8 -.@Query / ModelContext.-> M1
 
-    VM1 --> R1
-    VM1 --> R2
-    VM2 --> R1
-    VM2 --> R2
-    VM2 --> R3
-    VM3 --> R1
-    VM3 --> R2
-    VM4 --> R3
-    VM4 --> R1
-    VM4 --> R2
-    VM5 --> R2
-    VM7 --> R1
-    VM7 --> R2
-    VM8 --> R4
-    VM8 --> R2
+    V1 -. 集計・検証 .-> M2
+    V2 -. 集計 .-> M2
+    V3 -. 集計 .-> M2
+    V4 -. 計算 .-> M2
+    V7 -. 検証 .-> M2
 
-    R1 --> M1
-    R2 --> M1
-    R3 --> M1
-    R4 --> M1
+    M2 -. 参照のみ .-> M1
     M1 --> DB
 ```
-
-依存方向は上から下のみ（Navigation → View → ViewModel → Repository → Model）。下位層は上位層を知らない。
 
 ルートは `TabView` による 5 タブ構成（入力 / カレンダー / レポート / 予算 / 設定）。設定タブのメニューは「カテゴリ管理」「固定費の設定」の 2 項目のみ（NavigationStack で各画面へプッシュ遷移）。収支入力は「入力タブ」から直接利用するほか、「カレンダーから日付をダブルタップ」「日別収支リストのセルから編集」の経路で `TransactionEntrySheet` を起動する。
 
@@ -133,27 +107,32 @@ graph TB
 
 #### View 層（SwiftUI）
 
-- **責務**: 画面の宣言的構築、ユーザー入力の受け取り、ViewModel への通知、ViewModel の状態のレンダリング
-- **許可される操作**: ViewModel のメソッド呼び出し、ViewModel の `@Observable` 状態の購読、SwiftUI 標準コンポーネントの利用
-- **禁止される操作**: Repository / SwiftData への直接アクセス、ビジネスロジック（金額集計など）の実装
+- **責務**: 画面の宣言的構築、ユーザー入力の受け取り、SwiftData からのデータ取得 / 更新、純粋ロジックの呼び出し、結果のレンダリング
+- **許可される操作**: `@Query` による SwiftData フェッチ、`@Environment(\.modelContext)` による insert / update / delete、`@State` / `@Bindable` による UI 状態管理、純粋ロジック struct の呼び出し
+- **禁止される操作**: View 内に永続化や集計の **複雑なロジック** を直書きすること（純粋 struct に切り出すこと）
 
-#### ViewModel 層（@Observable クラス）
+#### Model 層
 
-- **責務**: 画面ごとの状態保持、ユーザー操作のハンドリング、Repository 呼び出しによるデータ取得・更新、表示用データへの変換（集計・フォーマット）
-- **許可される操作**: Repository protocol の呼び出し、Foundation での日付・数値変換、状態の更新
-- **禁止される操作**: SwiftUI への依存、SwiftData の `ModelContext` への直接アクセス
+##### @Model エンティティ
 
-#### Repository 層（Protocol + 実装）
+- **責務**: SwiftData によるデータ構造定義（`Transaction` / `Category` / `Budget` / `FixedExpense`）と永続化
+- **許可される操作**: SwiftData の永続化 / `@Relationship` による関連
+- **禁止される操作**: SwiftUI への依存
 
-- **責務**: 永続化操作の抽象化（CRUD）、クエリの提供、SwiftData の詳細を隠蔽
-- **許可される操作**: SwiftData の `ModelContext` 操作、`@Model` 型の取得・保存・削除
-- **禁止される操作**: View / ViewModel への依存、ビジネス集計ロジックの実装
+##### 純粋ロジック（struct）
 
-#### Model / 永続化層（SwiftData）
+- **責務**: View からも呼び出せる副作用のない計算・検証
+  - `SummaryAggregator`: `[Transaction]` → `MonthlySummary`
+  - `BudgetCalculator`: `[Transaction]` + `[Budget]` → `BudgetConsumption`
+  - `Validator`: 入力値の検証ロジック
+  - `DateRange` / `CurrencyFormatter`: 日付・通貨ユーティリティ
+- **許可される操作**: 引数として受け取った値の参照と計算
+- **禁止される操作**: SwiftData / SwiftUI / グローバル状態への依存
 
-- **責務**: データの構造定義（`@Model`）と永続化
-- **許可される操作**: SwiftData によるディスク永続化
-- **禁止される操作**: 上位層への依存
+#### Persistence（SwiftData）
+
+- **責務**: ディスク永続化（SQLite ベース）
+- アプリ起動時に `ModelContainer` を構築し、`@Environment` で View に注入する
 
 ## データ設計
 
@@ -234,42 +213,25 @@ erDiagram
 
 ### 内部インターフェース
 
-Repository は protocol で定義し、ViewModel からは protocol 経由で利用する。テスト時にはモック実装に差し替える。
+MV パターンでは Repository protocol を持たず、View が `@Query` / `ModelContext` を経由して SwiftData を直接利用する。集計・検証は純粋 struct の関数として提供し、View から直接呼び出す。
 
 ```swift
-// 主要シグネチャ（型は Swift 風の擬似コード）
-protocol TransactionRepository {
-    func transactions(in monthOf: Date) throws -> [Transaction]
-    func transactions(on date: Date) throws -> [Transaction]
-    func add(_ transaction: Transaction) throws
-    func update(_ transaction: Transaction) throws
-    func delete(_ transaction: Transaction) throws
-    func monthlySummary(of monthOf: Date) throws -> MonthlySummary
+// 純粋ロジックのシグネチャ（Swift 擬似コード）
+enum SummaryAggregator {
+    static func summarize(_ transactions: [Transaction]) -> MonthlySummary
 }
 
-protocol CategoryRepository {
-    func allCategories() throws -> [Category]
-    func add(_ category: Category) throws
-    func rename(_ category: Category, to name: String) throws
-    func delete(_ category: Category) throws  // 使用中（Transaction / Budget が参照）なら例外
+enum BudgetCalculator {
+    static func consumption(transactions: [Transaction], budgets: [Budget]) -> BudgetConsumption
 }
 
-protocol BudgetRepository {
-    func allBudgets() throws -> [Budget]
-    func overallBudget() throws -> Budget?
-    func budget(for category: Category) throws -> Budget?
-    func upsert(_ budget: Budget) throws  // 同一スコープの重複登録を禁止
-    func delete(_ budget: Budget) throws
-    func consumption(of monthOf: Date) throws -> BudgetConsumption  // 当月の消化状況
+enum Validator {
+    static func validate(amount: String) -> Result<Int, ValidationError>
+    static func validate(categoryName: String, existing: [Category]) -> Result<Void, ValidationError>
+    // 他、固定費名・メモ・想定支払い日 等
 }
 
-protocol FixedExpenseRepository {
-    func allFixedExpenses() throws -> [FixedExpense]
-    func add(_ fixedExpense: FixedExpense) throws
-    func update(_ fixedExpense: FixedExpense) throws
-    func delete(_ fixedExpense: FixedExpense) throws
-}
-
+// 集計結果の値型
 struct MonthlySummary {
     let totalIncome: Int   // 円
     let totalExpense: Int  // 円
@@ -289,6 +251,23 @@ struct BudgetStatus {
 }
 ```
 
+View 内での標準的な利用パターン:
+
+```swift
+// 例: CalendarView
+@Query(filter: #Predicate<Transaction> { ... }, sort: \.date)
+var monthTransactions: [Transaction]
+
+@Environment(\.modelContext) private var modelContext
+
+var body: some View {
+    let summary = SummaryAggregator.summarize(monthTransactions)
+    // ... summary を使った描画 ...
+}
+```
+
+テスト方針: 純粋 struct（Aggregator / Calculator / Validator）はユニットテストの主対象。SwiftData 連携は in-memory `ModelContainer` を使った統合テストで担保する（モック差し替えは行わない）。
+
 ### 主要画面一覧
 
 詳細な画面遷移・ワイヤーフレームは詳細設計書で定義する。基本設計レベルでは以下を識別する。ルートは 5 つのタブ + シート / プッシュ遷移で構成される。
@@ -299,7 +278,7 @@ struct BudgetStatus {
 | S-02    | カレンダー画面   | タブ（カレンダー）   | 上半分: 月カレンダー（各日の支出サマリ表示）+ 月次サマリヘッダ。下半分: シングルタップで選択した日の収支リスト。日付セルのダブルタップで S-06 を起動 |
 | S-03    | レポート画面     | タブ（レポート）     | 月次の合計収入・合計支出・差額、カテゴリ別の円グラフと内訳。月切替可能                                                                               |
 | S-04    | 予算画面         | タブ（予算）         | 全体予算 / カテゴリ別予算の設定・編集・削除、当月の消化額・残額・消化率の表示、超過時の視覚アラート                                                  |
-| S-05    | 設定画面         | タブ（設定）         | 「カテゴリ管理（S-07）」「固定費の設定（S-08）」の 2 メニューのみ。将来必要に応じてメニューを追加                                                     |
+| S-05    | 設定画面         | タブ（設定）         | 「カテゴリ管理（S-07）」「固定費の設定（S-08）」の 2 メニューのみ。将来必要に応じてメニューを追加                                                    |
 | S-06    | 収支入力シート   | モーダル（sheet）    | カレンダーからのダブルタップ起動時、および既存レコード編集時に表示。完了で元画面に復帰                                                               |
 | S-07    | カテゴリ管理画面 | プッシュ（設定から） | カテゴリの追加・編集・削除。S-05 から `NavigationStack` で遷移                                                                                       |
 | S-08    | 固定費の設定画面 | プッシュ（設定から） | 固定費（家賃 / サブスク等）の追加・編集・削除。一覧表示。Transaction の自動生成は行わない                                                            |
