@@ -4,6 +4,8 @@
 > Apple Human Interface Guidelines（HIG）と iOS 標準アプリ（カレンダー / メモ / リマインダー / 株価 等）の挙動を基準に整理。
 > 元の Apple Japan Web 版 DESIGN.md とは**別物**（Webサイトのスタイルではなく、iOS アプリ内のスタイル）。
 
+**視覚原本**: 本書のトークン・原則を画面に落とした成果物が [docs/mockups/家計簿ワイヤーフレーム.html](docs/mockups/家計簿ワイヤーフレーム.html)。Light / Dark × S-01〜S-05 を一覧できる。詳細は [docs/mockups/README.md](docs/mockups/README.md)。
+
 ---
 
 ## 1. Visual Theme & Atmosphere
