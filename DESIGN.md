@@ -110,7 +110,7 @@ Text("3件").font(.footnote).foregroundStyle(.secondary)
 ### 3.4 数字（金額）の扱い
 
 - 金額表示は `.monospacedDigit()` を必ず付ける（桁が揃ってチカチカしない）
-- フォーマットは `Decimal.formatted(.currency(code: "JPY"))` を使う（`¥3,360` / 小数なし自動）
+- フォーマットは `.currency(code: "JPY")` を使う（`Int` 値に適用可。`¥3,360` / 小数なし自動）。本アプリの金額型は `Int`（円）固定で、`Decimal` は使わない
 - 大きな金額の表示は `headline` または `title3` 程度
 
 ### 3.5 行間・字間
@@ -305,7 +305,7 @@ iOS HIG に従って、SwiftUI で家計簿アプリの XX 画面を作ってく
 - カラー: systemカラー（.primary / .secondary / systemGroupedBackground）のみ使用
 - ハードコードのhex は禁止（Asset Catalog 経由の AccentColor のみ可）
 - フォント: Dynamic Type の TextStyle（.body / .headline / .footnote 等）
-- 金額表示は Decimal.formatted(.currency(code: "JPY")) + .monospacedDigit()
+- 金額型は `Int`（円）。表示は `.currency(code: "JPY")` + `.monospacedDigit()`（`Decimal` は使わない）
 - アイコンは SF Symbols
 - タブバー 5項目: 入力(plus.circle.fill) / カレンダー(calendar) / レポート(chart.pie.fill) / 予算(dollarsign.circle) / 設定(gearshape)
 - リスト系画面は Form または List(.insetGrouped)
