@@ -123,16 +123,16 @@ erDiagram
 
 各 View は `@Query` で SwiftData を直接取得し、`@Environment(\.modelContext)` 経由で書き込みを行う。フォーム系の入力中状態は `@State` でローカル保持し、保存時に `Validator` で検証して `modelContext.insert` / `try modelContext.save()` を呼ぶ。
 
-| View | 取得（@Query） | 書き込み（ModelContext） | 純粋ロジック呼び出し |
-| --- | --- | --- | --- |
-| QuickEntryView | `Category`（Picker 用） | `Transaction.insert` | `Validator` |
-| CalendarView | `Transaction`（当月、`#Predicate` で月範囲絞り込み）+ `Category` + `Budget` | （なし。編集はシート側） | `SummaryAggregator` / `DateRange` |
-| ReportView | `Transaction`（選択月）+ `Category` | （なし） | `SummaryAggregator` |
-| BudgetView | `Budget` + `Transaction`（当月） | `Budget.insert / update / delete` | `BudgetCalculator` |
-| SettingsView | （なし。`NavigationLink` のみ） | （なし） | （なし） |
-| TransactionEntrySheet | `Category`（Picker 用） | `Transaction.insert / update` | `Validator` |
-| CategoryListView | `Category` | `Category.insert / update / delete` | `Validator` |
-| FixedExpenseListView | `FixedExpense` + `Category` | `FixedExpense.insert / update / delete` | `Validator` |
+| View                  | 取得（@Query）                                                              | 書き込み（ModelContext）                | 純粋ロジック呼び出し              |
+| --------------------- | --------------------------------------------------------------------------- | --------------------------------------- | --------------------------------- |
+| QuickEntryView        | `Category`（Picker 用）                                                     | `Transaction.insert`                    | `Validator`                       |
+| CalendarView          | `Transaction`（当月、`#Predicate` で月範囲絞り込み）+ `Category` + `Budget` | （なし。編集はシート側）                | `SummaryAggregator` / `DateRange` |
+| ReportView            | `Transaction`（選択月）+ `Category`                                         | （なし）                                | `SummaryAggregator`               |
+| BudgetView            | `Budget` + `Transaction`（当月）                                            | `Budget.insert / update / delete`       | `BudgetCalculator`                |
+| SettingsView          | （なし。`NavigationLink` のみ）                                             | （なし）                                | （なし）                          |
+| TransactionEntrySheet | `Category`（Picker 用）                                                     | `Transaction.insert / update`           | `Validator`                       |
+| CategoryListView      | `Category`                                                                  | `Category.insert / update / delete`     | `Validator`                       |
+| FixedExpenseListView  | `FixedExpense` + `Category`                                                 | `FixedExpense.insert / update / delete` | `Validator`                       |
 
 #### View の代表的な実装パターン
 
@@ -164,12 +164,12 @@ struct CalendarView: View {
 
 すべて副作用なしの `enum` namespace（インスタンス化不要）。SwiftUI / SwiftData に依存しない純粋関数のみ。
 
-| 種別 | 名前 | シグネチャ概要 |
-| --- | --- | --- |
-| 集計 | `SummaryAggregator` | `summarize([Transaction]) -> MonthlySummary` |
-| 集計 | `BudgetCalculator` | `consumption(transactions:, budgets:) -> BudgetConsumption` |
-| 検証 | `Validator` | `validate(amount: String) -> Result<Int, ValidationError>` 等 |
-| 日付 | `DateRange` | `monthBounds(of: Date) -> (Date, Date)` / `dayBounds(of:)` |
+| 種別 | 名前                | シグネチャ概要                                                     |
+| ---- | ------------------- | ------------------------------------------------------------------ |
+| 集計 | `SummaryAggregator` | `summarize([Transaction]) -> MonthlySummary`                       |
+| 集計 | `BudgetCalculator`  | `consumption(transactions:, budgets:) -> BudgetConsumption`        |
+| 検証 | `Validator`         | `validate(amount: String) -> Result<Int, ValidationError>` 等      |
+| 日付 | `DateRange`         | `monthBounds(of: Date) -> (Date, Date)` / `dayBounds(of:)`         |
 | 表示 | `CurrencyFormatter` | `format(_ value: Int) -> String`（"¥1,234"、ロケール固定 `ja_JP`） |
 
 これらは全てユニットテストの主対象となる。
@@ -263,6 +263,13 @@ sequenceDiagram
 ```
 
 ## 画面設計
+
+具体的なビジュアル仕様（カラーパレット・タイポグラフィ・各画面のレイアウト詳細）は別ファイルに分割している:
+
+- **デザイントークン**: [docs/detailed-design/design-tokens.md](./detailed-design/design-tokens.md)
+- **ワイヤーフレーム（HTML）**: [docs/mockups/家計簿ワイヤーフレーム.html](./mockups/家計簿ワイヤーフレーム.html)（ブラウザで開いて視覚確認）
+
+本節では構造（タブ配置・遷移先・主要操作）のみを定義する。
 
 ### S-01 入力画面（QuickEntryView）
 
@@ -384,14 +391,14 @@ enum DataIntegrityError: Error, LocalizedError {
 
 ### エラーの分類と処理
 
-| エラー種別                            | 発生箇所                  | 処理                                         | ユーザー表示                                                  |
-| ------------------------------------- | ------------------------- | -------------------------------------------- | ------------------------------------------------------------- |
-| ValidationError                       | 入力フォーム保存時        | 該当フィールドにエラー表示、保存ボタン無効化 | フィールド下に短文（例: 「金額は 1 以上を入力してください」） |
-| ValidationError.duplicateCategoryName | カテゴリ追加 / 名称変更時 | 保存中断                                     | フィールド下: 「同名のカテゴリが既に存在します」              |
-| DataIntegrityError.categoryInUse      | カテゴリ削除時            | 削除中断                                     | アラート: 「このカテゴリは使用中のため削除できません」        |
-| DataIntegrityError.duplicateBudgetScope | 予算追加時              | 保存中断                                     | アラート: 「この予算は既に設定されています」（編集に誘導）    |
-| SwiftData 保存失敗（Error）           | `try modelContext.save()` | 内部ログ出力（`os.Logger`）、保存中断        | アラート: 「保存に失敗しました。もう一度お試しください」      |
-| 想定外例外（その他 Error）            | 任意                      | 内部ログ出力、画面はエラーステートへ遷移     | 汎用アラート: 「予期しないエラーが発生しました」              |
+| エラー種別                              | 発生箇所                  | 処理                                         | ユーザー表示                                                  |
+| --------------------------------------- | ------------------------- | -------------------------------------------- | ------------------------------------------------------------- |
+| ValidationError                         | 入力フォーム保存時        | 該当フィールドにエラー表示、保存ボタン無効化 | フィールド下に短文（例: 「金額は 1 以上を入力してください」） |
+| ValidationError.duplicateCategoryName   | カテゴリ追加 / 名称変更時 | 保存中断                                     | フィールド下: 「同名のカテゴリが既に存在します」              |
+| DataIntegrityError.categoryInUse        | カテゴリ削除時            | 削除中断                                     | アラート: 「このカテゴリは使用中のため削除できません」        |
+| DataIntegrityError.duplicateBudgetScope | 予算追加時                | 保存中断                                     | アラート: 「この予算は既に設定されています」（編集に誘導）    |
+| SwiftData 保存失敗（Error）             | `try modelContext.save()` | 内部ログ出力（`os.Logger`）、保存中断        | アラート: 「保存に失敗しました。もう一度お試しください」      |
+| 想定外例外（その他 Error）              | 任意                      | 内部ログ出力、画面はエラーステートへ遷移     | 汎用アラート: 「予期しないエラーが発生しました」              |
 
 **リトライ方針**: 永続化失敗は自動リトライしない。ローカル DB 操作のため一時的な失敗が起こりにくく、自動リトライがかえって挙動を不安定化する。ユーザーの再操作で対応する。
 
