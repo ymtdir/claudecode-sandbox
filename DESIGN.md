@@ -1,245 +1,220 @@
-# DESIGN.md — Apple Japan
+# DESIGN.md — iOS HIG（日本語アプリ）
 
-> Apple Japan（https://www.apple.com/jp/）のデザイン仕様書。
-> Puppeteer による computed style 実測値（2026-04-06 取得）に基づく。
-> 本家 awesome-design-md の apple DESIGN.md との差分に焦点を当てる。
+> SwiftUI / UIKit で作る iOS ネイティブアプリ向けデザイン仕様書。
+> Apple Human Interface Guidelines（HIG）と iOS 標準アプリ（カレンダー / メモ / リマインダー / 株価 等）の挙動を基準に整理。
+> 元の Apple Japan Web 版 DESIGN.md とは**別物**（Webサイトのスタイルではなく、iOS アプリ内のスタイル）。
 
 ---
 
 ## 1. Visual Theme & Atmosphere
 
-- **デザイン方針**: Apple グローバルと同一のミニマルデザイン。製品を主役にし、タイポグラフィと余白で構成するマガジンレイアウト
-- **密度**: 非常にゆったり。大きなヒーロー画像と見出しが画面いっぱいに広がる
-- **キーワード**: ミニマル、プレミアム、製品中心、白黒基調、大胆なタイポグラフィ
-- **日本語版の特徴**: `SF Pro JP` というApple独自の日本語フォントが最優先で使用される。英語版の `SF Pro Display` / `SF Pro Text` よりも前に配置
+- **デザイン方針**: iOS 標準アプリ（カレンダー / メモ / リマインダー / 設定 / 株価）と並べて違和感がないこと。独自の装飾を最小化し、**システムが提供する素材**（systemカラー、SF Symbols、Dynamic Type）に寄せる
+- **密度**: 中。リスト中心の画面では cell の min height は 44pt、フォーム系は inset grouped で余白を取る
+- **キーワード**: クリア、整理、システム標準、ライト/ダーク両対応、Dynamic Type 対応
+- **日本語アプリの特徴**: テキストが英語より縦に長くなりやすいため、cell の高さは可変（`UITableView.automaticDimension` / SwiftUI は自動）。truncation よりも折り返しを優先
 
 ---
 
 ## 2. Color Palette & Roles
 
-> 英語版と同一のカラーパレット
+> ハードコードした色は使わず、**システムカラー（semantic color）** を使用すること。これによりライト/ダーク、アクセシビリティ（高コントラスト）に自動追従する
 
-### Primary
+### 2.1 ラベル色（テキスト）
 
-- **Near Black** (`#1d1d1f`): プライマリテキスト。Apple は純粋な `#000` ではなくこの色を使う
-- **Pure Black** (`#000`): ヒーロー背景、ダークセクション
-- **White** (`#fff`): ページ背景、ダーク上のテキスト
-- **Light Gray** (`#f5f5f7`): セクション背景（交互配置）
+| 用途               | SwiftUI      | UIKit              | Light            | Dark             |
+| ------------------ | ------------ | ------------------ | ---------------- | ---------------- |
+| 本文・主要テキスト | `.primary`   | `.label`           | `#000000` α=0.85 | `#FFFFFF` α=0.85 |
+| 補助テキスト       | `.secondary` | `.secondaryLabel`  | `#3C3C43` α=0.60 | `#EBEBF5` α=0.60 |
+| 弱め               | —            | `.tertiaryLabel`   | `#3C3C43` α=0.30 | `#EBEBF5` α=0.30 |
+| プレースホルダ     | —            | `.quaternaryLabel` | `#3C3C43` α=0.18 | `#EBEBF5` α=0.16 |
 
-### Interactive
+### 2.2 背景色
 
-- **Apple Blue** (`#0071e3`): CTA ボタン、フォーカスリング（`--sk-focus-color`）
-- **Link Blue** (`#0066cc`): テキストリンク（`--sk-body-link-color`）
-- **Bright Blue** (`#2997ff`): ダーク背景上のリンク
+| 用途                         | SwiftUI / UIKit                     | Light     | Dark      |
+| ---------------------------- | ----------------------------------- | --------- | --------- |
+| アプリの基本背景             | `Color(UIColor.systemBackground)`   | `#FFFFFF` | `#000000` |
+| カード等の上に重ねる二次背景 | `.secondarySystemBackground`        | `#F2F2F7` | `#1C1C1E` |
+| その上にもう一段             | `.tertiarySystemBackground`         | `#FFFFFF` | `#2C2C2E` |
+| グループ化リストの基本       | `.systemGroupedBackground`          | `#F2F2F7` | `#000000` |
+| グループ化セルの面           | `.secondarySystemGroupedBackground` | `#FFFFFF` | `#1C1C1E` |
 
-### Text（opacity ベース）
+> **使い分け**: フォームや設定画面は **grouped** 系（`Form` / `List(.insetGrouped)`）。一般的な縦スクロール画面は **system** 系。これにより iOS 標準アプリと地が揃う
 
-- **Primary** (`#1d1d1f` / `rgba(0,0,0,0.88)`): 本文テキスト
-- **Secondary** (`rgba(0,0,0,0.56)`): カルーセルボタン等
-- **Nav Text** (`rgba(0,0,0,0.8)`): グローバルナビ
-- **On Dark** (`#f5f5f7` / `rgba(255,255,255,0.92)`): ダーク背景上テキスト
+### 2.3 Fill 色（コントロール塗り）
 
-### Surface
+| 用途                         | SwiftUI / UIKit         |
+| ---------------------------- | ----------------------- |
+| 大きめの塗り（ボタン背景等） | `.systemFill`           |
+| 中（タグ・ピル）             | `.secondarySystemFill`  |
+| 小（プログレスバー溝）       | `.tertiarySystemFill`   |
+| 極小（テキストフィールド枠） | `.quaternarySystemFill` |
 
-- **Nav Background** (`rgba(0,0,0,0.8)`): グローバルナビ背景（すりガラス）
-- **Nav Opened** (`#fafafc`): ナビ展開時
-- **Glyph Gray Secondary** (`#6e6e73`): セカンダリグリフ
+### 2.4 区切り線
+
+- セパレータ: `.separator`（透過込み）／不透明版が必要なら `.opaqueSeparator`
+
+### 2.5 Tint Color（アクセント）
+
+- iOS のシステム tint は **systemBlue**（`#007AFF` / Dark `#0A84FF`）
+- アプリ全体のアクセントは `Asset Catalog` で `AccentColor` を設定し、SwiftUI なら `.tint(.accentColor)`
+- 本アプリ（家計簿）の tint は **systemBlue を維持**（カレンダー / リマインダーと並べたときに浮かない）
+
+### 2.6 セマンティックな色
+
+| 用途                 | 色                                                         |
+| -------------------- | ---------------------------------------------------------- |
+| 収入・成功           | `.green`（`#34C759` / Dark `#30D158`）                     |
+| 支出超過・警告・削除 | `.red`（`#FF3B30` / Dark `#FF453A`）                       |
+| 目立たせたいリンク   | `.blue`（systemBlue）                                      |
+| 注意（黄色）         | `.yellow`（`#FFCC00` / Dark `#FFD60A`）                    |
+| カテゴリ識別の追加色 | `.orange` `.purple` `.pink` `.teal` `.indigo` を組み合わせ |
+
+> カテゴリ識別など装飾用に色を **増やす場合も systemXxx の中から選ぶ**。`#ff6b3d` のような独自オレンジは避ける
 
 ---
 
 ## 3. Typography Rules
 
-### 3.1 和文フォント
+### 3.1 フォント — Dynamic Type が原則
 
-- **SF Pro JP**: Apple 独自の日本語フォント。apple.com/jp で最優先指定
-- **ヒラギノ角ゴ Pro**: macOS フォールバック（`Hiragino Kaku Gothic Pro` / `ヒラギノ角ゴ Pro W3`）
-- **メイリオ / Meiryo**: Windows フォールバック
-- **MS Pゴシック**: レガシー Windows フォールバック
+- **必ず `Font.TextStyle`（SwiftUI）/ `UIFont.TextStyle`（UIKit）を使う**。固定 pt は原則禁止
+- システムが自動で **SF Pro**（欧文）+ **ヒラギノ角ゴシック**（和文）+ Dynamic Type のサイズ拡縮を行う
 
-### 3.2 欧文フォント
+### 3.2 Text Style 一覧（Default サイズ／HIG 準拠）
 
-- **SF Pro Display**: 大見出し用（20px 以上）
-- **SF Pro Text**: 本文用（19px 以下）
-- **SF Pro Icons**: アイコングリフ
-- **Helvetica Neue / Helvetica / Arial**: 一般フォールバック
+| Style         | Size (pt) | Weight   | 用途                                      |
+| ------------- | --------- | -------- | ----------------------------------------- |
+| `largeTitle`  | 34        | Regular  | 大画面の見出し（カレンダー月名など）      |
+| `title`       | 28        | Regular  | 画面タイトル（NavigationBar large title） |
+| `title2`      | 22        | Regular  | 副見出し                                  |
+| `title3`      | 20        | Regular  | カード見出し                              |
+| `headline`    | 17        | Semibold | リスト項目の主見出し                      |
+| `body`        | 17        | Regular  | 本文                                      |
+| `callout`     | 16        | Regular  | 補足本文                                  |
+| `subheadline` | 15        | Regular  | サブテキスト                              |
+| `footnote`    | 13        | Regular  | 注釈                                      |
+| `caption`     | 12        | Regular  | 補助情報                                  |
+| `caption2`    | 11        | Regular  | さらに小さい補助                          |
 
-### 3.3 font-family 指定
+### 3.3 SwiftUI 例
 
-> 英語版との最大の差分。`SF Pro JP` が全スタックの先頭に追加されている
-
-```css
-/* 本文用（Text） */
-font-family:
-  'SF Pro JP', 'SF Pro Text', 'SF Pro Icons', 'Hiragino Kaku Gothic Pro',
-  'ヒラギノ角ゴ Pro W3', メイリオ, Meiryo, 'ＭＳ Ｐゴシック', 'Helvetica Neue',
-  Helvetica, Arial, sans-serif;
-
-/* 見出し用（Display） */
-font-family:
-  'SF Pro JP', 'SF Pro Display', 'SF Pro Icons', 'Hiragino Kaku Gothic Pro',
-  'ヒラギノ角ゴ Pro W3', メイリオ, Meiryo, 'ＭＳ Ｐゴシック', 'Helvetica Neue',
-  Helvetica, Arial, sans-serif;
-
-/* フッターナビ用 */
-font-family:
-  'SF Pro JP', 'SF Pro Text', 'Apple TP', 'Myriad Set Pro', 'SF Pro Icons',
-  'Apple Legacy Icons', 'Hiragino Kaku Gothic Pro', 'ヒラギノ角ゴ Pro W3',
-  'Apple TP CommonT', メイリオ, Meiryo, 'Helvetica Neue', Helvetica, Arial,
-  sans-serif;
+```swift
+Text("4月").font(.largeTitle).fontWeight(.bold)
+Text("食費").font(.headline)
+Text("¥3,360").font(.body).monospacedDigit()  // 数字は等幅digitで桁揃え
+Text("3件").font(.footnote).foregroundStyle(.secondary)
 ```
 
-**英語版との差分**:
+### 3.4 数字（金額）の扱い
 
-- 英語版: `SF Pro Display` / `SF Pro Text` が先頭
-- 日本語版: `SF Pro JP` が先頭に追加。日本語グリフの表示品質を最優先
-- 和文フォールバック: ヒラギノ角ゴ Pro → メイリオ → MS Pゴシック
-- 一部の製品名見出し（"MacBook Air" 等の英語のみ）は `SF Pro JP` なしで `SF Pro Display` を直接使用
-
-### 3.4 文字サイズ・ウェイト階層
-
-> computed style 実測値
-
-**トップページ**
-
-| Role                | Font Stack | Size  | Weight | Line Height      | Letter Spacing  | 備考               |
-| ------------------- | ---------- | ----- | ------ | ---------------- | --------------- | ------------------ |
-| Hero Display (最大) | Display    | 108px | 600    | 115.56px (×1.07) | 2.16px (0.02em) | 学割キャンペーン等 |
-| Hero Display (大)   | Display    | 64px  | 600    | 67.2px (×1.05)   | normal          | ヒーローキャッチ   |
-| Hero Display (中)   | Display    | 53px  | 600    | 55.65px (×1.05)  | -0.53px         | サブヒーロー       |
-| Section Heading     | Display    | 40px  | 600    | 44px (×1.10)     | normal          | 製品名（h3）       |
-| Subtitle            | Display    | 28px  | 400    | 32px (×1.14)     | 0.196px         | 説明文（大）       |
-| Subtitle (small)    | Display    | 21px  | 400    | 26px (×1.24)     | 0.231px         | 説明文（小）       |
-| Body                | Text       | 17px  | 400    | 25px (×1.47)     | -0.357px        | 本文               |
-| Caption             | Text       | 14px  | 400    | 20.6px (×1.47)   | normal          | 価格表示等         |
-| Nav Link            | Text       | 12px  | 400    | 12px (×1.0)      | normal          | グローバルナビ     |
-| Footer Category     | Text       | 12px  | 400    | 17px (×1.42)     | normal          | フッターカテゴリ   |
-
-**iPhone ページ**
-
-| Role            | Size    | Weight    | Line Height    | Letter Spacing | 備考                 |
-| --------------- | ------- | --------- | -------------- | -------------- | -------------------- |
-| Page Title (h1) | 80px    | 600       | 87px (×1.09)   | normal         | "iPhone"             |
-| Section Heading | 28px    | 600       | 33px (×1.18)   | 0.196px        | 「新しいルック。」等 |
-| Body            | 17px    | 400       | 23px (×1.35)   | normal         | 製品説明             |
-| Body Emphasis   | 17px    | 600       | 23px (×1.35)   | normal         | 価格表示             |
-| Caption         | 14px    | 400 / 600 | 19.8px (×1.42) | normal         | 補足情報             |
-| Product Name    | 19.89px | 600       | 26.9px (×1.35) | normal         | "iPhone 17 Pro" 等   |
+- 金額表示は `.monospacedDigit()` を必ず付ける（桁が揃ってチカチカしない）
+- フォーマットは `Decimal.formatted(.currency(code: "JPY"))` を使う（`¥3,360` / 小数なし自動）
+- 大きな金額の表示は `headline` または `title3` 程度
 
 ### 3.5 行間・字間
 
-**行間 (line-height)** — 実測値:
+- **明示指定しない**。iOS のシステムが Dynamic Type サイズに応じて line-height / tracking を自動調整する
+- どうしても調整が必要な場合のみ `.lineSpacing()` / `.tracking()` を使い、根拠コメントを残す
 
-- body: `25px` (17px × 1.47)
-- Hero Display: `×1.05`〜`×1.10` — 非常にタイト
-- Section Heading: `44px` (40px × 1.10)
-- Subtitle: `32px` (28px × 1.14)
-- Body: `25px` (17px × 1.47) / iPhone ページでは `23px` (17px × 1.35)
-- Nav: `12px` (12px × 1.0) — 1行分ちょうど
+### 3.6 日本語タイポグラフィ
 
-**字間 (letter-spacing)** — 実測値:
+- フォント: **ヒラギノ角ゴシック** を OS が自動選択（iOS 9 以降）。`HiraKakuPro` / `Pro N` を直接指定する必要はない
+- 禁則処理: iOS 標準の禁則に任せる（`lineBreakMode` のデフォルトで OK）
+- 縦書き: 該当なし
 
-- body: `-0.357px` — **負のトラッキング**（Apple の特徴）
-- Hero 108px: `2.16px` (0.02em) — 巨大サイズのみ正のトラッキング
-- Hero 53px: `-0.53px` — 負のトラッキング
-- Subtitle 28px: `0.196px` — わずかに正
-- Subtitle 21px: `0.231px` — わずかに正
-- Section Heading 40px: `normal`
-- Nav / Caption: `normal`
+### 3.7 数字と日本語の混植
 
-**ガイドライン**:
-
-- Apple は基本的に**負の letter-spacing** を使う（文字を詰める方向）
-- 大サイズの見出し（50px以上）ではサイズに応じて正負が変わる
-- 小さいテキスト（14px以下）は `normal`
-
-### 3.6 禁則処理・改行ルール
-
-- ブラウザデフォルトの禁則処理に依存
-- 日本語テキストに `word-break` の明示的な指定なし
-
-### 3.7 OpenType 機能
-
-```css
-/* 全要素で palt なし */
-font-feature-settings: normal;
-```
-
-- **palt は使用していない**: SF Pro JP 自体が日本語の字詰めを内蔵しているため、追加の OpenType 機能は不要
-- 英語版と同様、`font-feature-settings` はすべて `normal`
-
-### 3.8 縦書き
-
-- 該当なし
+- 「¥3,360」「4月28日」のような表記は和欧文混在。`Text` をそのまま渡せばシステムが SF Pro + ヒラギノで自動合成する
+- 日付は `Date.formatted(.dateTime.year().month().day().locale(Locale(identifier: "ja_JP")))` などで Locale に任せる
 
 ---
 
 ## 4. Component Stylings
 
-### Buttons
+### 4.1 ボタン
 
-**Primary CTA（"購入する" 等）**
+iOS では **長方形のピル型は使わない**（それは Web の Apple.com）。HIG では：
 
-- Background: `#0071e3`（Apple Blue）
-- Text: `#fff`
-- Border Radius: 980px（完全ピル型）
-- Font Size: 17px
-- Font Weight: 400
-- Padding: 8px 22px
+- **Filled / Plain / Bordered** の3種が標準。SwiftUI の `Button` + `buttonStyle` で十分
+- 角丸は **8〜12pt 程度の Continuous Corner**（`RoundedRectangle(cornerRadius: 12, style: .continuous)`）
+- 「保存」など navigation bar 内ボタンは tint カラーのテキストのみ（背景なし）
 
-**Outline（"詳しく見る" 等）**
+```swift
+Button("保存") { … }.buttonStyle(.borderedProminent)   // tint背景の塗り
+Button("キャンセル") { … }.buttonStyle(.bordered)        // 薄いfill
+Button("削除", role: .destructive) { … }                 // 自動で .red
+```
 
-- Background: transparent
-- Text: `#0071e3`
-- Border: 1px solid `#0071e3`
-- Border Radius: 980px
+### 4.2 ナビゲーションバー
 
-**Dark Fill**
+- `NavigationStack` + `.navigationTitle("…")` ＋ `.navigationBarTitleDisplayMode(.large)` を基本
+- 背景は **半透明 + ぼかし**（システムが自動）。手動で `backdrop-filter` を作る必要はない
+- 左に戻る、右に保存／編集 — iOS 標準の配置
 
-- Background: `#1d1d1f`
-- Text: `#fff`
-- Border Radius: 8px
+### 4.3 タブバー
 
-**Nav CTA（"購入する"ナビ内）**
+- `TabView { … }` を使う。本アプリは 5 タブ（入力 / カレンダー / レポート / 予算 / 設定）
+- アイコンは **SF Symbols** で統一：
+  - 入力: `plus.circle.fill`
+  - カレンダー: `calendar`
+  - レポート: `chart.pie.fill`（または `chart.bar.fill`）
+  - 予算: `dollarsign.circle`（または `target`）
+  - 設定: `gearshape`
+- ラベルは必須。アイコンのみは避ける
 
-- Background: `#0071e3`
-- Text: `#fff`
-- Border Radius: 980px
-- Font Size: 12px
+### 4.4 リスト・フォーム
 
-### Navigation
+- 設定 / カテゴリ管理 / 固定費 → **`Form` または `List(.insetGrouped)`**
+- 日別リスト → **`List(.plain)` または `List(.inset)`**
+- セルの行は `HStack` + `Spacer()` + 末尾 chevron（`Image(systemName: "chevron.right")` は不要、Navigation で自動付与）
 
-- Background: `rgba(0,0,0,0.8)` + `backdrop-filter: saturate(180%) blur(20px)`（すりガラス）
-- Height: 44px（`--r-globalnav-height`）
-- Text: `rgba(0,0,0,0.8)`
-- Font Size: 12px（カテゴリリンク）
+### 4.5 入力（数値キーパッド）
+
+- 金額入力は `TextField` + `.keyboardType(.numberPad)`
+- カスタムテンキーを作る場合も、`.systemFill` 系の塗りと SF Pro のサイズに合わせる
+- 「000」キーは独自拡張なので明示的に `.bordered` 風に
+
+### 4.6 シート・モーダル
+
+- `.sheet(isPresented:)` を使う。サイズは `.presentationDetents([.medium, .large])` で iOS 純正の半シート（リマインダー新規作成風）が出せる
+- 取り扱いハンドルは `.presentationDragIndicator(.visible)`
+
+### 4.7 アイコン
+
+- **SF Symbols** のみ使用。emoji や独自 SVG はカテゴリのアバター以外では避ける
+- 重みは `.regular` 基準、強調したいときだけ `.semibold`
 
 ---
 
 ## 5. Layout Principles
 
-### Content Width（CSS Custom Properties 実測値）
+### 5.1 余白・グリッド
 
-| Token                             | Value  | 用途               |
-| --------------------------------- | ------ | ------------------ |
-| `--global-content-max-width-hero` | 1680px | ヒーローセクション |
-| `--global-content-max-width`      | 1260px | 通常コンテンツ     |
+- **Safe Area を尊重**：SwiftUI ではデフォルトで尊重される
+- 標準の **横余白は 16pt**（iPhone）／ナビバー large title 配下は 20pt
+- セクション間の縦余白は **24〜32pt**
+- カード内 padding は 12〜16pt
 
-### Breakpoints（実測値）
+### 5.2 タッチターゲット
 
-| Name   | Width        | 用途         |
-| ------ | ------------ | ------------ |
-| Large  | ≥ 1024px     | デスクトップ |
-| Medium | 834px–1023px | タブレット   |
-| Small  | 320px–833px  | モバイル     |
+- 最小 **44 × 44 pt**（HIG 必須）
+- リストセル高さ: 標準 44pt、サブタイトル付き 56〜60pt
+
+### 5.3 コンテンツ幅
+
+- iPhone は基本 1 カラム
+- iPad では `NavigationSplitView` を使い、サイドバー（マスター）+ ディテールの 2 カラムが標準
+- 本アプリは Phase 1 で iPhone のみ
 
 ---
 
 ## 6. Depth & Elevation
 
-- **Nav Glass**: `rgba(0,0,0,0.8)` + `backdrop-filter: saturate(180%) blur(20px)` — すりガラスナビ
-- **Card Shadow**: `rgba(0,0,0,0.22) 3px 5px 30px 0px`
-- **Focus Ring**: `0 0 0 3px rgba(0,113,227,0.2)` — Apple Blue の透過リング
-- 基本的にフラット。影は hover 時のカードに限定
+- iOS は基本フラット。**カードに影をつけない**（システムは material と blur で奥行きを出す）
+- 必要なら `Material` を使う：
+  - `.background(.regularMaterial)` — リーガル（タブバー風）
+  - `.background(.thinMaterial)` — シート上の薄ぼかし
+- カスタム shadow は使わない。どうしても必要なら `shadow(color: .black.opacity(0.08), radius: 8, y: 2)` 程度に留める
 
 ---
 
@@ -247,38 +222,47 @@ font-feature-settings: normal;
 
 ### Do（推奨）
 
-- `SF Pro JP` をフォントスタックの先頭に配置する（英語版との最大の差分）
-- テキスト色は `#1d1d1f` を使う（`#000` ではない）
-- 本文に負の `letter-spacing`（`-0.357px`）を適用する
-- ボタンは 980px のピル型を基本とする
-- `palt` は使わない（SF Pro JP が内蔵の字詰めを持つ）
-- ナビにはすりガラス効果（`backdrop-filter`）を使う
-- 製品名が英語のみの場合は `SF Pro Display` を直接使用しても良い
+- **systemカラー / セマンティックカラーを使う**（`.primary` `.secondary` `Color(.systemGroupedBackground)` 等）。ハードコードした hex は asset catalog の AccentColor 以外で避ける
+- **Dynamic Type 対応**（`.font(.body)` 等の TextStyle を使う）
+- **SF Symbols でアイコン統一**
+- **金額には `.monospacedDigit()`**
+- **半シート（`.presentationDetents`）** を入力モーダルに使い、iOS 純正の体験に揃える
+- **`Form` / `List(.insetGrouped)`** を設定系に使う
+- ライト / ダーク両対応 — Asset Catalog の `Any Appearance / Dark` で色を分ける
 
 ### Don't（禁止）
 
-- 英語版のフォントスタック（`SF Pro Display` 先頭）をそのまま使わない。日本語版は `SF Pro JP` が先頭
-- `palt` や `font-feature-settings` を追加しない（SF Pro JP に不要）
-- ヒラギノ角ゴ **ProN** を使わない。Apple JP サイトは **Pro**（ProN ではない）を使用
-- ダーク背景のテキストに純粋な `#fff` を使わない。`#f5f5f7` または `rgba(255,255,255,0.92)` を使う
-- 正の `letter-spacing` を本文に使わない（Apple は詰める方向が基本）
+- **ピル型（`cornerRadius: 980`）ボタンを使わない**。それは Apple.com Web の流儀。iOS では 8〜12pt の Continuous Corner
+- **独自カラー（`#ff6b3d` 等）を散らかさない**。systemOrange / systemPink などから選ぶ
+- **固定 pt のフォントサイズを多用しない**。Dynamic Type が崩れる
+- **SF Pro Display / SF Pro Text を直接指定しない**。iOS が Text Style から自動選択する
+- **Web由来の `backdrop-filter: blur()` を CSS 風に書かない**。SwiftUI は `Material` を使う
+- **`.font(.system(size: 12))` のような固定指定は最終手段**。原則 `.caption` などを使う
 
 ---
 
 ## 8. Responsive Behavior
 
-### Breakpoints
+### Size Class
 
-| Name   | Width        | 説明         |
-| ------ | ------------ | ------------ |
-| Large  | ≥ 1024px     | デスクトップ |
-| Medium | 834px–1023px | タブレット   |
-| Small  | 320px–833px  | モバイル     |
+- iPhone Portrait: `compact × regular`（基本）
+- iPhone Landscape: `compact × compact`（小型機）／`regular × compact`（Pro Max）
+- iPad: `regular × regular`
 
-### ナビゲーション
+### Phase 1 のスコープ
 
-- Large: テキストリンクのカテゴリナビ
-- Small: ハンバーガーメニュー（展開時背景 `#fafafc`）
+- iPhone（縦持ち）のみ最適化
+- iPad / Landscape は Auto Layout に任せる（崩れなければOK）
+
+### Dark Mode
+
+- 自動追従。`@Environment(\.colorScheme)` で必要時に分岐
+- 意図的にライト固定したい画面はないため、`.preferredColorScheme()` は使わない
+
+### Dynamic Type
+
+- 最低 `large`（デフォルト）から `accessibility5` までで崩れないこと
+- 金額が画面に収まらないときは折返しではなく `.minimumScaleFactor(0.7)` で縮小
 
 ---
 
@@ -287,44 +271,80 @@ font-feature-settings: normal;
 ### クイックリファレンス
 
 ```
-Text Primary: #1d1d1f
-Text On Dark: #f5f5f7
-Background: #fff
-Section Background: #f5f5f7
-Hero Background: #000
-Apple Blue: #0071e3
-Link Blue: #0066cc
-Nav: rgba(0,0,0,0.8) + backdrop-filter: blur(20px)
+Tint:           Color.accentColor (= systemBlue 推奨)
+Text Primary:   .primary
+Text Secondary: .secondary
+Background:     Color(.systemBackground)        // 白 / 黒
+Grouped BG:     Color(.systemGroupedBackground) // 設定画面用
+Card BG:        Color(.secondarySystemGroupedBackground)
+Separator:      Color(.separator)
 
-Text Font: "SF Pro JP", "SF Pro Text", "SF Pro Icons",
-  "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro W3",
-  メイリオ, Meiryo, "ＭＳ Ｐゴシック",
-  "Helvetica Neue", Helvetica, Arial, sans-serif
+Income (収入):  .green        (systemGreen)
+Expense Over:   .red          (systemRed)
+Warn:           .yellow       (systemYellow)
 
-Display Font: "SF Pro JP", "SF Pro Display", "SF Pro Icons",
-  "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro W3",
-  メイリオ, Meiryo, "ＭＳ Ｐゴシック",
-  "Helvetica Neue", Helvetica, Arial, sans-serif
+Font Body:      .font(.body)
+Font Heading:   .font(.title2).fontWeight(.semibold)
+Font Money:     .font(.headline).monospacedDigit()
+Font Caption:   .font(.footnote).foregroundStyle(.secondary)
 
-Body: 17px / weight: 400 / line-height: 1.47 / letter-spacing: -0.357px
-Heading: 40px / weight: 600 / line-height: 1.10
-Button: pill (980px radius) / Apple Blue
-palt: 不使用（SF Pro JP 内蔵）
-Content Max Width: 1260px / Hero: 1680px
+Corner Radius:  10〜12 (continuous)
+Tap Target:     ≥ 44×44 pt
+Horizontal Pad: 16 pt
+Tab Bar Icons:  SF Symbols only
+Modal:          .sheet + .presentationDetents([.medium, .large])
+                + .presentationDragIndicator(.visible)
 ```
 
 ### プロンプト例
 
 ```
-Apple Japan のデザインに従って、製品紹介ページを作成してください。
-- フォント: "SF Pro JP", "SF Pro Display", "Hiragino Kaku Gothic Pro",
-    "ヒラギノ角ゴ Pro W3", メイリオ, Meiryo, sans-serif
-- テキスト色: #1d1d1f（純粋な黒は使わない）
-- ダーク背景テキスト: #f5f5f7
-- 本文: 17px, line-height: 1.47, letter-spacing: -0.357px
-- 見出し: SF Pro Display, 40px, weight 600, line-height: 1.10
-- ボタン: Apple Blue #0071e3, 角丸 980px（ピル型）
-- ナビ: すりガラス rgba(0,0,0,0.8) + backdrop-filter: blur(20px)
-- palt は使わない
-- ヒラギノ角ゴは Pro（ProN ではない）
+iOS HIG に従って、SwiftUI で家計簿アプリの XX 画面を作ってください。
+- カラー: systemカラー（.primary / .secondary / systemGroupedBackground）のみ使用
+- ハードコードのhex は禁止（Asset Catalog 経由の AccentColor のみ可）
+- フォント: Dynamic Type の TextStyle（.body / .headline / .footnote 等）
+- 金額表示は Decimal.formatted(.currency(code: "JPY")) + .monospacedDigit()
+- アイコンは SF Symbols
+- タブバー 5項目: 入力(plus.circle.fill) / カレンダー(calendar) / レポート(chart.pie.fill) / 予算(dollarsign.circle) / 設定(gearshape)
+- リスト系画面は Form または List(.insetGrouped)
+- 入力モーダルは .sheet + .presentationDetents([.medium, .large])
+- ライト/ダーク両対応（自動）
+- 角丸 10〜12pt continuous、ピル型は使わない
 ```
+
+### SwiftUI スニペット集
+
+```swift
+// 金額表示
+Text(amount, format: .currency(code: "JPY"))
+    .font(.headline)
+    .monospacedDigit()
+
+// グループ化リスト（設定画面）
+Form {
+    Section {
+        NavigationLink("カテゴリ管理") { CategoryListView() }
+        NavigationLink("固定費の設定") { FixedExpenseListView() }
+    }
+}
+
+// 半シートで入力
+.sheet(isPresented: $showInput) {
+    InputView()
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
+}
+
+// プログレスバー（予算消化）
+ProgressView(value: spent, total: budget)
+    .tint(spent > budget ? .red : .green)
+```
+
+---
+
+## 10. 参考
+
+- Apple HIG: https://developer.apple.com/design/human-interface-guidelines/
+- SF Symbols: https://developer.apple.com/sf-symbols/
+- Dynamic Type: https://developer.apple.com/design/human-interface-guidelines/typography
+- iOS Color: https://developer.apple.com/design/human-interface-guidelines/color
